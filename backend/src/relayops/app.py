@@ -61,6 +61,7 @@ def create_app(
     )
 
     _register_database(app, settings, engine)
+    _register_celery(app, settings)
     _register_request_lifecycle(app, log)
     _register_error_handlers(app, log)
     _register_blueprints(app)
@@ -84,6 +85,13 @@ def _register_database(app: Flask, settings: Settings, engine: Engine | None) ->
         app.extensions["relayops_engine_factory"] = lambda: get_engine(settings)
 
     app.teardown_appcontext(close_db)
+
+
+def _register_celery(app: Flask, settings: Settings) -> None:
+    """Attach a Celery client so the API can inspect workers and enqueue work."""
+    from relayops.celery_app import build_celery_app
+
+    app.extensions["relayops_celery"] = build_celery_app(settings)
 
 
 def _register_request_lifecycle(app: Flask, log) -> None:
@@ -142,10 +150,11 @@ def _register_error_handlers(app: Flask, log) -> None:
 
 def _register_blueprints(app: Flask) -> None:
     from relayops.api.auth import bp as auth_bp
+    from relayops.api.health import bp as health_bp
     from relayops.api.meta import bp as meta_bp
     from relayops.api.tenants import bp as tenants_bp
 
-    for blueprint in (meta_bp, auth_bp, tenants_bp):
+    for blueprint in (meta_bp, auth_bp, tenants_bp, health_bp):
         app.register_blueprint(blueprint, url_prefix=API_PREFIX)
 
     @app.get("/healthz")

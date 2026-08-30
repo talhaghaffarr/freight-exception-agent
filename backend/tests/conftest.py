@@ -20,6 +20,7 @@ from relayops.migrations import run_migrations
 from relayops.seed import seed_demo_data
 
 DEFAULT_TEST_DATABASE_URL = "postgresql+psycopg://relayops:relayops@localhost:55432/relayops_test"
+DEFAULT_TEST_BROKER_URL = "redis://localhost:56379/0"
 MIGRATIONS_DIR = Path(__file__).resolve().parents[1] / "migrations"
 
 
@@ -100,13 +101,20 @@ def seeded_engine(migrated_engine: Engine) -> Engine:
     return migrated_engine
 
 
+@pytest.fixture(scope="session")
+def broker_url() -> str:
+    return os.environ.get("TEST_BROKER_URL", DEFAULT_TEST_BROKER_URL)
+
+
 @pytest.fixture
-def db_settings(database_url: str) -> Settings:
+def db_settings(database_url: str, broker_url: str) -> Settings:
     return Settings.from_env(
         {
             "SECRET_KEY": "test-only-signing-key",
             "TESTING": "true",
             "DATABASE_URL": database_url,
+            "CELERY_BROKER_URL": broker_url,
+            "CELERY_RESULT_BACKEND": broker_url.rsplit("/", 1)[0] + "/1",
         }
     )
 
