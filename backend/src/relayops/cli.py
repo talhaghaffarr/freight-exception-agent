@@ -62,12 +62,15 @@ def main(argv: Sequence[str] | None = None, environ: Mapping[str, str] | None = 
 
         if args.command == "seed":
             from relayops.seed import seed_demo_data
+            from relayops.seed_freight import seed_freight
 
             with engine.begin() as connection:
                 summary = seed_demo_data(connection, seed=args.seed)
+                freight = seed_freight(connection)
             print(
                 f"seeded tenants={summary.tenants} users={summary.users} "
-                f"memberships={summary.memberships}"
+                f"memberships={summary.memberships} loads={freight.loads} "
+                f"stops={freight.stops} tracking={freight.tracking_points}"
             )
             return 0
     finally:

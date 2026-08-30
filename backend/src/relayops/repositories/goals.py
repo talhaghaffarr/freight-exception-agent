@@ -136,6 +136,20 @@ class GoalRepository:
         ).one()
         return _to_goal(existing), False
 
+    def for_subject(self, tenant_id: uuid.UUID, subject_id: uuid.UUID) -> list[Goal]:
+        """Every goal any agent has opened against one subject, newest first."""
+        rows = self._connection.execute(
+            text(
+                f"""
+                select {_GOAL_COLUMNS} from goals
+                where tenant_id = :tenant_id and subject_id = :subject_id
+                order by opened_at desc
+                """
+            ),
+            {"tenant_id": tenant_id, "subject_id": subject_id},
+        ).fetchall()
+        return [_to_goal(row) for row in rows]
+
     def transition(
         self, goal_id: uuid.UUID, expected_version: int, transition: Transition
     ) -> Goal:

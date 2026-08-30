@@ -101,6 +101,23 @@ def seeded_engine(migrated_engine: Engine) -> Engine:
     return migrated_engine
 
 
+@pytest.fixture
+def seeded_freight_engine(seeded_engine: Engine) -> Engine:
+    """Identity seed plus the synthetic freight board."""
+    from relayops.seed_freight import seed_freight
+
+    with seeded_engine.begin() as connection:
+        seed_freight(connection)
+    return seeded_engine
+
+
+@pytest.fixture
+def seeded_freight_connection(seeded_freight_engine: Engine):
+    with seeded_freight_engine.connect() as connection:
+        yield connection
+        connection.rollback()
+
+
 @pytest.fixture(scope="session")
 def broker_url() -> str:
     return os.environ.get("TEST_BROKER_URL", DEFAULT_TEST_BROKER_URL)
@@ -120,6 +137,18 @@ def db_settings(database_url: str, broker_url: str) -> Settings:
 
 
 @pytest.fixture
+def freight_api_app(seeded_freight_engine: Engine, db_settings: Settings):
+    application = create_app(db_settings, engine=seeded_freight_engine)
+    application.config.update(TESTING=True)
+    return application
+
+
+@pytest.fixture
+def freight_api_client(freight_api_app):
+    return freight_api_app.test_client()
+
+
+@pytest.fixture
 def api_app(seeded_engine: Engine, db_settings: Settings):
     application = create_app(db_settings, engine=seeded_engine)
     application.config.update(TESTING=True)
@@ -135,6 +164,16 @@ def api_client(api_app):
 def login_as(api_client):
     def _login(email: str):
         response = api_client.post("/api/v1/auth/demo-session", json={"email": email})
+        assert response.status_code == 200, response.get_data(as_text=True)
+        return response.get_json()["data"]
+
+    return _login
+
+
+@pytest.fixture
+def freight_login_as(freight_api_client):
+    def _login(email: str):
+        response = freight_api_client.post("/api/v1/auth/demo-session", json={"email": email})
         assert response.status_code == 200, response.get_data(as_text=True)
         return response.get_json()["data"]
 
