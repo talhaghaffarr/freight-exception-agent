@@ -1,0 +1,29 @@
+# Render blueprint: one free web service backed by an external Neon PostgreSQL.
+#
+# The free instance type spins down after ~15 minutes idle and cold-starts in
+# under a minute; a periodic ping of /healthz keeps it warm within the free
+# instance hours. DATABASE_URL is deliberately sync: false so the Neon
+# connection string is entered in the dashboard, never committed.
+
+services:
+  - type: web
+    name: relayops-demo
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /healthz
+    envVars:
+      - key: PORT
+        value: "10000"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: ENVIRONMENT_MODE
+        value: sandbox
+      - key: MIGRATE_ON_BOOT
+        value: "true"
+      - key: SEED_ON_BOOT
+        value: "true"
+      - key: MIGRATIONS_DIR
+        value: /app/migrations

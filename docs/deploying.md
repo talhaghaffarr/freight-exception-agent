@@ -2,23 +2,52 @@
 
 The image is self-contained: it compiles the console, serves it from the API
 process, applies migrations on boot, and seeds the synthetic freight. What it
-does not contain is a database, so a deployment is the image plus two managed
-services.
-
-The shape below keeps the whole thing inside free tiers. Costs and free
-allowances change — check each provider's current pricing before relying on it.
+does not contain is a database, so a deployment is the image plus a managed
+PostgreSQL. Costs and free allowances change — check each provider's current
+pricing before relying on it.
 
 | Piece | Service | Why |
 |---|---|---|
-| App | Fly.io | Scales to zero when idle |
-| PostgreSQL | [Neon](https://neon.tech) free tier | Fly's Managed Postgres is a paid add-on |
-| Redis | [Upstash](https://upstash.com) free tier | Only needed for the Celery health probe today |
+| App | [Render](https://render.com) free web service | Genuinely free; no card. Spins down after ~15 min idle |
+| PostgreSQL | [Neon](https://neon.tech) free tier | The app's only hard external dependency |
+| Redis | [Upstash](https://upstash.com) free tier | Optional; only the Celery health probe uses it today |
+
+Fly.io remains supported by the same image (`fly.toml` is in the repo) but no
+longer has a free plan — new accounts get a 7-day / 2-machine-hour trial and
+then require a card on Pay-As-You-Go.
+
+## Render (recommended free path)
+
+1. Create the Neon project and copy its **direct** (non-pooled) connection
+   string. Convert the scheme for this app's driver:
+
+   ```
+   postgresql://user:pass@host/db?sslmode=require
+     →  postgresql+psycopg://user:pass@host/db?sslmode=require
+   ```
+
+2. Sign in to Render with GitHub. **New + → Blueprint**, pick this repository —
+   Render reads `render.yaml`, which defines the free web service and generates
+   `SECRET_KEY` itself.
+
+3. When prompted for `DATABASE_URL`, paste the converted Neon string. It is
+   entered in the dashboard and never committed.
+
+4. Deploy. The first boot applies migrations and seeds the demo. The app is at
+   `https://relayops-demo.onrender.com` (Render may suffix the name).
+
+5. Free instances sleep after ~15 minutes idle and cold-start in under a
+   minute. To keep the demo warm, point a free uptime pinger (e.g.
+   cron-job.org or UptimeRobot) at `/healthz` every 10 minutes — a single
+   always-on free service fits inside Render's free instance hours.
 
 Redis is optional. Without `CELERY_BROKER_URL` the API runs and every screen
 works; the System page reports the worker components as unavailable, which is
 accurate — no worker is deployed.
 
-## 1. Provision the database
+## Fly.io (paid alternative)
+
+### 1. Provision the database
 
 Create a Neon project and copy its connection string. Convert the scheme to the
 driver this project uses:
@@ -27,7 +56,7 @@ driver this project uses:
 postgresql://user:pass@host/db        →  postgresql+psycopg://user:pass@host/db?sslmode=require
 ```
 
-## 2. Create the Fly app
+### 2. Create the Fly app
 
 ```bash
 fly auth login
@@ -37,7 +66,7 @@ fly auth login
 fly launch --no-deploy --copy-config --name relayops-demo --region iad
 ```
 
-## 3. Set secrets
+### 3. Set secrets
 
 Never commit these; `fly secrets` stores them encrypted and restarts the app.
 
@@ -55,7 +84,7 @@ Optionally, for the Celery health probe:
 fly secrets set CELERY_BROKER_URL="rediss://default:TOKEN@HOST:6379/0" CELERY_RESULT_BACKEND="rediss://default:TOKEN@HOST:6379/1"
 ```
 
-## 4. Deploy
+### 4. Deploy
 
 ```bash
 fly deploy

@@ -41,7 +41,7 @@ ENV PATH="/app/.venv/bin:$PATH" \
     CONSOLE_DIST=/app/console
 
 # Gunicorn, not the Flask dev server: the dev server is single-threaded and
-# explicitly not for production use.
+# explicitly not for production use. The bind port follows $PORT so the same
+# image runs on Fly (PORT=8080 in fly.toml) and on Render (PORT=10000).
 EXPOSE 8080
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "--threads", "4", \
-     "--timeout", "60", "--access-logfile", "-", "relayops.wsgi:application"]
+CMD ["sh", "-c", "exec gunicorn --bind 0.0.0.0:${PORT:-8080} --workers 2 --threads 4 --timeout 60 --access-logfile - relayops.wsgi:application"]
