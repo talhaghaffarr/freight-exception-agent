@@ -102,12 +102,16 @@ second scanner cannot double-send. See
 
 Requires Docker, Python 3.13 with [uv](https://docs.astral.sh/uv/), and Node 20+.
 
+Start PostgreSQL, Valkey and Mailpit:
+
 ```bash
 docker compose -f docker-compose.dev.yml up -d
 ```
 
+Install dependencies, apply migrations, and seed the demo freight:
+
 ```bash
-cd backend && uv sync && uv run python -m relayops.cli migrate && uv run python -m relayops.cli seed
+cd backend && uv sync && set -a && source .env.dev 2>/dev/null; set +a && uv run python -m relayops.cli migrate && uv run python -m relayops.cli seed
 ```
 
 ```bash

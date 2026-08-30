@@ -1,0 +1,51 @@
+# Local development dependencies.
+#
+# Ports are deliberately non-default so this stack can run alongside any other
+# PostgreSQL or Redis already on the machine, and they match backend/.env.dev.
+# The application itself is not in here: it runs from source so migrations,
+# tests and the console reload without a rebuild.
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: relayops-dev-postgres
+    environment:
+      POSTGRES_USER: relayops
+      POSTGRES_PASSWORD: relayops
+      POSTGRES_DB: relayops
+    ports:
+      - "55433:5432"
+    volumes:
+      - relayops-dev-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U relayops -d relayops"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  valkey:
+    image: valkey/valkey:8-alpine
+    container_name: relayops-dev-valkey
+    ports:
+      - "56379:6379"
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # Sandbox SMTP. Nothing leaves the machine; mail is read at localhost:8025.
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: relayops-dev-mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    healthcheck:
+      test: ["CMD", "/mailpit", "readyz"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  relayops-dev-pgdata:
