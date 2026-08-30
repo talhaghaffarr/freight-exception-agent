@@ -7,7 +7,7 @@
  */
 
 import type { LoadDetail } from "@/app/types";
-import { REASON_LABEL, formatClock, shortReason } from "./facts";
+import { REASON_LABEL, formatClock, humanise, shortReason } from "./facts";
 
 type CheckState = "pass" | "fail" | "hold";
 
@@ -46,7 +46,7 @@ export function buildChecks(load: LoadDetail): Check[] {
       label: "ETA computed",
       state: facts.eta.available ? "pass" : "fail",
       detail: facts.eta.available
-        ? `${formatClock(facts.eta.predicted_arrival)} · ${facts.eta.source}`
+        ? `${formatClock(facts.eta.predicted_arrival)} · ${humanise(facts.eta.source)}`
         : (REASON_LABEL[facts.eta.reason ?? ""] ?? "unavailable"),
     },
     {
@@ -70,7 +70,10 @@ export function buildChecks(load: LoadDetail): Check[] {
     {
       label: "No prior action",
       state: load.goals.length === 0 ? "pass" : "fail",
-      detail: load.goals.length === 0 ? "none for this episode" : `${load.goals.length} open`,
+      detail:
+        load.goals.length === 0
+          ? "nothing sent for this appointment"
+          : `${load.goals.length} open`,
     },
   ];
 }

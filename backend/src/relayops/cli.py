@@ -63,14 +63,18 @@ def main(argv: Sequence[str] | None = None, environ: Mapping[str, str] | None = 
         if args.command == "seed":
             from relayops.seed import seed_demo_data
             from relayops.seed_freight import seed_freight
+            from relayops.seed_history import seed_history
 
             with engine.begin() as connection:
                 summary = seed_demo_data(connection, seed=args.seed)
                 freight = seed_freight(connection)
+                history = seed_history(connection)
             print(
                 f"seeded tenants={summary.tenants} users={summary.users} "
                 f"memberships={summary.memberships} loads={freight.loads} "
-                f"stops={freight.stops} tracking={freight.tracking_points}"
+                f"stops={freight.stops} tracking={freight.tracking_points} "
+                f"agents={history.agent_definitions} goals={history.goals} "
+                f"goal_events={history.goal_events} outcomes={history.outcomes}"
             )
             return 0
     finally:

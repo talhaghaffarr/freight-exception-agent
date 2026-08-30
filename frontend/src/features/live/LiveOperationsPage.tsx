@@ -22,6 +22,7 @@ import {
   formatAge,
   formatClock,
   formatLateness,
+  humanise,
   needsAttention,
   rowBadge,
   shortReason,
@@ -293,7 +294,7 @@ export function LiveOperationsPage() {
                       <div className="fact__value">
                         {formatClock(load.facts.eta.predicted_arrival)}
                       </div>
-                      <div className="fact__note">{load.facts.eta.traffic_assumption}</div>
+                      <div className="fact__note">{humanise(load.facts.eta.traffic_assumption)}</div>
                     </>
                   ) : (
                     <>

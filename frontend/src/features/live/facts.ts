@@ -33,6 +33,19 @@ export const FRESHNESS_LABEL: Record<string, string> = {
   stale: "Stale",
 };
 
+/** Machine identifiers from the API, in the words a dispatcher uses. */
+export const SOURCE_LABEL: Record<string, string> = {
+  route_estimate: "route estimate",
+  historical_average: "historical average traffic",
+  eld: "ELD",
+  telematics: "telematics",
+};
+
+export function humanise(token: string | null): string {
+  if (!token) return "";
+  return SOURCE_LABEL[token] ?? token.replace(/_/g, " ");
+}
+
 export function formatClock(iso: string | null): string {
   if (!iso) return "—";
   return new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });

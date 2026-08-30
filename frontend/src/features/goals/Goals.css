@@ -1,0 +1,376 @@
+/*
+ * Goals queue and goal trace.
+ *
+ * A dense ledger of everything the fleet decided, in the same evidence-first
+ * voice as the live board: chroma only where a state needs a person, mono for
+ * refs, ids, and timestamps.
+ */
+
+.goals {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.goals__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.goals__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.goals__subtitle {
+  margin: 2px 0 0;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.goals__empty {
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* ---- State filter chips ---- */
+.statefilter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.statefilter__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-raised);
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.statefilter__chip:hover {
+  background: var(--surface-sunken);
+}
+
+.statefilter__chip[aria-pressed="true"] {
+  background: var(--surface-nav);
+  border-color: var(--surface-nav);
+  color: var(--text-inverse);
+}
+
+.statefilter__count {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.statefilter__chip[aria-pressed="true"] .statefilter__count {
+  color: var(--text-on-nav);
+}
+
+/* Quiet tone accents on the chip's leading edge, not its whole body. */
+.statefilter__chip--critical { border-left: 3px solid var(--tone-critical); }
+.statefilter__chip--warning { border-left: 3px solid var(--tone-warning); }
+.statefilter__chip--positive { border-left: 3px solid var(--tone-positive); }
+.statefilter__chip--info { border-left: 3px solid var(--tone-info); }
+
+/* ---- Goal table ---- */
+.goaltable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-base);
+}
+
+.goaltable th {
+  text-align: left;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-strong);
+  background: var(--surface-sunken);
+  white-space: nowrap;
+}
+
+.goalrow {
+  height: 38px;
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer;
+}
+
+.goalrow:hover {
+  background: var(--surface-sunken);
+}
+
+.goalrow td {
+  padding: 6px var(--space-4);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.goalrow__ref a {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.goalrow__ref a:hover {
+  color: var(--brand);
+  text-decoration: underline;
+}
+
+.goalrow__version {
+  margin-left: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.goalrow__subject {
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+}
+
+.goalrow__outcome {
+  color: var(--text-secondary);
+}
+
+.goalrow__time {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+/* ---- State chips (shared with the trace page) ---- */
+.goalchip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.goalchip--critical { background: var(--tone-critical-surface); color: var(--tone-critical); }
+.goalchip--warning { background: var(--tone-warning-surface); color: var(--tone-warning); }
+.goalchip--positive { background: var(--tone-positive-surface); color: var(--tone-positive); }
+.goalchip--neutral { background: var(--tone-neutral-surface); color: var(--text-secondary); }
+.goalchip--info { background: var(--tone-info-surface); color: var(--tone-info); }
+
+/* ---- Goal trace ---- */
+.trace {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 860px;
+}
+
+.trace__back {
+  font-size: var(--text-sm);
+  text-decoration: none;
+}
+
+.trace__back:hover {
+  text-decoration: underline;
+}
+
+.trace__lede {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.trace__id {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.trace__sub {
+  margin: 2px 0 0;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+}
+
+.trace__sub .mono {
+  color: var(--text-muted);
+}
+
+/* Under-the-hood proof: the idempotency evidence, grouped and labelled. */
+.fingerprint {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-sunken);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+}
+
+.fingerprint__label {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.fingerprint__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.fingerprint__value {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  word-break: break-all;
+}
+
+.fingerprint__copy {
+  border: 1px solid var(--border-strong);
+  background: var(--surface-raised);
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.fingerprint__copy:hover {
+  background: var(--surface-sunken);
+}
+
+/* ---- Event spine, same recorder-trace voice as the live decision ledger ---- */
+.tracelog {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-5);
+  display: grid;
+  gap: 0;
+  position: relative;
+}
+
+.tracelog::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--space-5) + 9px);
+  top: var(--space-4);
+  bottom: var(--space-4);
+  width: 1px;
+  background: var(--border-strong);
+}
+
+.traceevent {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  column-gap: var(--space-3);
+  padding: var(--space-2) 0;
+  position: relative;
+}
+
+.traceevent__seq {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--surface-raised);
+  border: 1.5px solid var(--border-strong);
+  color: var(--text-secondary);
+  position: relative;
+  top: 1px;
+}
+
+.traceevent--terminal .traceevent__seq {
+  border-color: var(--surface-nav);
+  background: var(--surface-nav);
+  color: var(--text-inverse);
+}
+
+.traceevent__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.traceevent__label {
+  font-weight: 600;
+}
+
+.traceevent__type {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.traceevent__states {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.traceevent__time {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.traceevent__detail {
+  margin: 3px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+}
+
+.traceevent__fact {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  background: var(--surface-sunken);
+  border-radius: var(--radius-sm);
+  padding: 1px 6px;
+  word-break: break-all;
+}
+
+.traceevent__fact b {
+  font-weight: 600;
+  color: var(--text-muted);
+}

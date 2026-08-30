@@ -206,9 +206,12 @@ def reset_demo(engine: Engine, tenant_id: uuid.UUID) -> dict[str, int]:
     ago drifts: a load seeded 38 minutes late reads as 98 minutes late later on.
     Re-seeding restores the intended figures, and dropping the demo goals lets
     the eligibility ladder and the racing-scanner demonstration run from a clean
-    state again.
+    state again. The agent history is re-anchored in the same transaction, so
+    the overview and analytics keep showing the trailing week instead of
+    zeroing out.
     """
     from relayops.seed_freight import seed_freight
+    from relayops.seed_history import seed_history
 
     with engine.begin() as connection:
         removed = connection.execute(
@@ -216,5 +219,10 @@ def reset_demo(engine: Engine, tenant_id: uuid.UUID) -> dict[str, int]:
             {"tenant_id": tenant_id},
         ).rowcount
         summary = seed_freight(connection)
+        history = seed_history(connection)
 
-    return {"goals_cleared": removed or 0, "loads_reseeded": summary.loads}
+    return {
+        "goals_cleared": removed or 0,
+        "loads_reseeded": summary.loads,
+        "goals_reseeded": history.goals,
+    }

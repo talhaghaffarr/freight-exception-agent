@@ -33,11 +33,13 @@ def _bootstrap() -> None:
         if os.environ.get("SEED_ON_BOOT", "").lower() in {"1", "true", "yes"}:
             from relayops.seed import seed_demo_data
             from relayops.seed_freight import seed_freight
+            from relayops.seed_history import seed_history
 
             with engine.begin() as connection:
                 seed_demo_data(connection)
                 freight = seed_freight(connection)
-            log.info("demo_seeded", loads=freight.loads)
+                history = seed_history(connection)
+            log.info("demo_seeded", loads=freight.loads, goals=history.goals)
 
 
 if os.environ.get("MIGRATE_ON_BOOT", "true").lower() in {"1", "true", "yes"}:

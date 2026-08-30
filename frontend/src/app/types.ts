@@ -197,3 +197,59 @@ export interface GoalTrace {
   goal: GoalSummary;
   events: GoalTraceEvent[];
 }
+
+/**
+ * Goals queue, agent catalog, and outcome analytics.
+ *
+ * `terminal_outcome` and `state` travel as the backend's stable enum values;
+ * the UI maps them to operator language and shows the raw value only where it
+ * earns its place as evidence.
+ */
+export interface GoalRow {
+  id: string;
+  reference: string | null;
+  agent_type: string;
+  agent_version: string;
+  subject_label: string | null;
+  state: string;
+  terminal_outcome: string | null;
+  opened_at: string | null;
+  closed_at: string | null;
+}
+
+export interface GoalListResponse {
+  rows: GoalRow[];
+  /** Whole-tenant totals per state, independent of the active filter. */
+  counts: Record<string, number>;
+}
+
+export interface AgentCatalogEntry {
+  agent_type: string;
+  version: string;
+  trigger_kind: "scanner" | "inbound";
+  display_name: string;
+  description: string | null;
+  /** True only for agents whose runtime has actually shipped. */
+  live: boolean;
+  enabled: boolean;
+  config: Record<string, unknown>;
+  counts: { goals_7d: number; succeeded_7d: number };
+}
+
+export interface OutcomeSlice {
+  outcome: string;
+  count: number;
+}
+
+export interface DailyGoalCounts {
+  date: string;
+  opened: number;
+  succeeded: number;
+  suppressed: number;
+}
+
+export interface OutcomeAnalytics {
+  outcomes: OutcomeSlice[];
+  daily: DailyGoalCounts[];
+  value: { operator_minutes_saved: number };
+}

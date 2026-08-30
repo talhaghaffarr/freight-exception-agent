@@ -1,0 +1,581 @@
+/*
+ * Reactive inbox — design preview.
+ *
+ * The page is one story told four times: an inbound email walks the safety
+ * gate ladder, the model reads exactly one sanitized message, and everything
+ * after the hard rule is computed. Purple appears on this screen only where
+ * the model actually runs.
+ *
+ * Classnames are namespaced (ibx-, gates/gate, extract, reply) so nothing here
+ * collides with the live console's .checks vocabulary.
+ */
+
+.ibx {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 0;
+}
+
+.ibx__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.ibx__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.ibx__subtitle {
+  margin: 2px 0 0;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.ibx__split {
+  display: grid;
+  grid-template-columns: minmax(260px, 330px) minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .ibx__split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---- Panel shell (own copy; features/live is another team's surface) ---- */
+.ibx-panel {
+  background: var(--surface-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.ibx-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--surface-sunken);
+}
+
+.ibx-panel__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.ibx-panel__note {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  letter-spacing: -0.01em;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- Thread list ---- */
+.ibx-threads {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ibx-thread {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.ibx-thread:last-child {
+  border-bottom: 0;
+}
+
+.ibx-thread__button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  border-left: 3px solid transparent;
+  background: transparent;
+  padding: 9px var(--space-4);
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  transition: background 120ms ease;
+}
+
+.ibx-thread__button:hover {
+  background: var(--surface-sunken);
+}
+
+.ibx-thread__button[aria-current="true"] {
+  background: var(--brand-weak);
+  border-left-color: var(--brand);
+}
+
+.ibx-thread__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.ibx-thread__from {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ibx-thread__time {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.ibx-thread__subject {
+  margin: 2px 0 0;
+  font-size: var(--text-base);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ibx-thread__chiprow {
+  margin-top: 5px;
+}
+
+/* ---- Chips ---- */
+.ibx-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ibx-chip code {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.ibx-chip--answered {
+  background: var(--tone-positive-surface);
+  color: var(--tone-positive);
+}
+
+/* A suppressed inbound needs nobody; it earns no chroma. */
+.ibx-chip--suppressed {
+  background: var(--tone-neutral-surface);
+  color: var(--text-secondary);
+}
+
+.ibx-chip--model {
+  background: var(--tone-model-surface);
+  color: var(--tone-model);
+}
+
+/* ---- Detail stack ---- */
+.ibx-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+/* ---- Inbound message ---- */
+.ibx-msg {
+  padding: var(--space-4);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.ibx-msg__meta {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: var(--space-2) var(--space-5);
+  font-size: var(--text-sm);
+}
+
+.ibx-msg__meta dt {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.ibx-msg__meta dd {
+  margin: 2px 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  overflow-wrap: anywhere;
+}
+
+/* The captured payload, set in mono: evidence, not prose. */
+.ibx-quote {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-sunken);
+  border-left: 3px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.7;
+  color: var(--text-secondary);
+  white-space: pre-line;
+}
+
+/* ---- Safety gates: the ladder, on its own spine ---- */
+.gates {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-5);
+  display: grid;
+  gap: 0;
+  position: relative;
+}
+
+.gates::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--space-5) + 5px);
+  top: var(--space-4);
+  bottom: var(--space-4);
+  width: 1px;
+  background: var(--border-strong);
+}
+
+.gate {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr);
+  align-items: baseline;
+  column-gap: var(--space-3);
+  font-size: var(--text-base);
+  padding: 5px 0;
+  position: relative;
+}
+
+.gate__mark {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  line-height: 1;
+  font-weight: 700;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--surface-raised);
+  border: 1.5px solid var(--border-strong);
+  color: transparent;
+  position: relative;
+  top: 3px;
+}
+
+.gate--pass .gate__mark {
+  border-color: var(--tone-positive);
+  background: var(--tone-positive);
+  color: var(--surface-raised);
+}
+
+.gate--fail .gate__mark {
+  border-color: var(--tone-critical);
+  background: var(--tone-critical);
+  color: var(--surface-raised);
+}
+
+/* The one rung the model owns. Purple appears nowhere else on the ladder. */
+.gate--model .gate__mark {
+  border-color: var(--tone-model);
+  background: var(--tone-model);
+  color: var(--surface-raised);
+}
+
+.gate--model .gate__detail {
+  color: var(--tone-model);
+}
+
+.gate--skip .gate__mark {
+  border-style: dashed;
+}
+
+.gate--skip .gate__label,
+.gate--skip .gate__detail {
+  color: var(--text-muted);
+}
+
+.gate__label {
+  font-weight: 500;
+}
+
+.gate--fail .gate__label {
+  font-weight: 600;
+}
+
+.gate__detail {
+  display: block;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: -0.01em;
+  margin-top: 1px;
+  word-break: break-word;
+}
+
+.gates__verdict {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+  font-size: var(--text-base);
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.gates__verdict b {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+
+/* The countable enum rides along as evidence, never as the headline. */
+.gates__verdict code {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.gates__verdict--proceed {
+  background: var(--brand-weak);
+}
+
+.gates__verdict--held {
+  background: var(--tone-neutral-surface);
+}
+
+/* ---- LLM extraction: the model's entire footprint ---- */
+.ibx-panel--model {
+  border-color: var(--tone-model);
+}
+
+.ibx-panel--model .ibx-panel__head {
+  background: var(--tone-model-surface);
+  border-bottom-color: var(--tone-model);
+}
+
+.ibx-panel--model .ibx-panel__title {
+  color: var(--tone-model);
+}
+
+.extract__body {
+  padding: var(--space-4);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.extract__label {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.extract__block {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.7;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
+.extract__block--out {
+  background: var(--tone-model-surface);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+}
+
+.extract__note {
+  margin: -6px 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+/* The hard boundary. Everything above is the model; nothing below is. */
+.extract__rule {
+  border: 0;
+  border-top: 2px solid var(--text-primary);
+  margin: var(--space-2) 0 0;
+}
+
+.extract__stop {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ---- Computed reply ---- */
+.reply__body {
+  padding: var(--space-4);
+  display: grid;
+  gap: var(--space-4);
+}
+
+.ibx-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1px;
+  background: var(--border-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.ibx-fact {
+  background: var(--surface-raised);
+  padding: var(--space-3) var(--space-4);
+}
+
+.ibx-fact__label {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.ibx-fact__value {
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.ibx-fact__value--alert {
+  color: var(--tone-critical);
+}
+
+.ibx-fact__note {
+  margin-top: 2px;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+/* The rendered email: the one thing on the page set like mail, not evidence. */
+.reply__mail {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.reply__mailhead {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--surface-sunken);
+  display: grid;
+  gap: 2px;
+}
+
+.reply__mailsubject {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+
+.reply__mailroute {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  word-break: break-all;
+}
+
+.reply__mailbody {
+  padding: var(--space-4);
+  display: grid;
+  gap: var(--space-3);
+  font-size: var(--text-base);
+  line-height: 1.55;
+}
+
+.reply__mailbody p {
+  margin: 0;
+}
+
+.reply__threading {
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  border-top: 1px dashed var(--border-strong);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.reply__foot {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+  background: var(--brand-weak);
+  font-size: var(--text-base);
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.reply__foot b {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+
+.reply__foot code {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--text-secondary);
+}

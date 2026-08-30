@@ -6,12 +6,16 @@
  */
 
 import type {
+  AgentCatalogEntry,
   ApiEnvelope,
   BoardResponse,
   Dashboard,
+  GoalListResponse,
+  GoalRow,
   GoalTrace,
   HealthReport,
   LoadDetail,
+  OutcomeAnalytics,
   RaceResult,
   Session,
 } from "./types";
@@ -113,6 +117,29 @@ export const api = {
   goalTrace: (tenantSlug: string, goalId: string) =>
     request<GoalTrace>(
       `/tenants/${encodeURIComponent(tenantSlug)}/goals/${encodeURIComponent(goalId)}/trace`,
+    ),
+  listGoals: async (
+    tenantSlug: string,
+    options: { state?: string | null; agentType?: string | null; limit?: number } = {},
+  ): Promise<GoalListResponse> => {
+    const params = new URLSearchParams();
+    if (options.state) params.set("state", options.state);
+    if (options.agentType) params.set("agent_type", options.agentType);
+    if (options.limit) params.set("limit", String(options.limit));
+    const query = params.toString();
+    const envelope = await requestEnvelope<GoalRow[]>(
+      `/tenants/${encodeURIComponent(tenantSlug)}/goals${query ? `?${query}` : ""}`,
+    );
+    return {
+      rows: envelope.data,
+      counts: (envelope.meta?.counts as Record<string, number>) ?? {},
+    };
+  },
+  agentCatalog: (tenantSlug: string) =>
+    request<AgentCatalogEntry[]>(`/tenants/${encodeURIComponent(tenantSlug)}/agents/catalog`),
+  outcomeAnalytics: (tenantSlug: string, days = 7) =>
+    request<OutcomeAnalytics>(
+      `/tenants/${encodeURIComponent(tenantSlug)}/analytics/outcomes?days=${days}`,
     ),
 };
 

@@ -118,6 +118,16 @@ def seeded_freight_connection(seeded_freight_engine: Engine):
         connection.rollback()
 
 
+@pytest.fixture
+def seeded_history_engine(seeded_freight_engine: Engine) -> Engine:
+    """Freight board plus the seeded agent history (goals, events, outcomes)."""
+    from relayops.seed_history import seed_history
+
+    with seeded_freight_engine.begin() as connection:
+        seed_history(connection)
+    return seeded_freight_engine
+
+
 @pytest.fixture(scope="session")
 def broker_url() -> str:
     return os.environ.get("TEST_BROKER_URL", DEFAULT_TEST_BROKER_URL)
@@ -146,6 +156,28 @@ def freight_api_app(seeded_freight_engine: Engine, db_settings: Settings):
 @pytest.fixture
 def freight_api_client(freight_api_app):
     return freight_api_app.test_client()
+
+
+@pytest.fixture
+def history_api_app(seeded_history_engine: Engine, db_settings: Settings):
+    application = create_app(db_settings, engine=seeded_history_engine)
+    application.config.update(TESTING=True)
+    return application
+
+
+@pytest.fixture
+def history_api_client(history_api_app):
+    return history_api_app.test_client()
+
+
+@pytest.fixture
+def history_login_as(history_api_client):
+    def _login(email: str):
+        response = history_api_client.post("/api/v1/auth/demo-session", json={"email": email})
+        assert response.status_code == 200, response.get_data(as_text=True)
+        return response.get_json()["data"]
+
+    return _login
 
 
 @pytest.fixture
