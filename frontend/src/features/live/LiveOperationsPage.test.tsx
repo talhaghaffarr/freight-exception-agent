@@ -1,4 +1,5 @@
 import { screen, waitFor, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { api } from "@/app/api";
@@ -71,6 +72,23 @@ const BOARD: BoardResponse = {
       origin_point: { latitude: 42.3314, longitude: -83.0458 },
       destination_point: { latitude: 36.1627, longitude: -86.7816 },
       facts: DARK_FACTS,
+    },
+    {
+      load_id: "cccccccc-3333-5333-8333-333333333333",
+      reference: "LD-2100",
+      customer_name: "Great Lakes Parts",
+      carrier_name: "Arrow Freight",
+      driver_name: "Driver 01",
+      origin: "Indianapolis, IN",
+      destination: "Nashville, TN",
+      pickup_appointment: "2026-08-31T04:00:00+00:00",
+      origin_point: { latitude: 39.7684, longitude: -86.1581 },
+      destination_point: { latitude: 36.1627, longitude: -86.7816 },
+      facts: facts({
+        classification: "scheduled",
+        minutes_late: -485,
+        reason: null,
+      }),
     },
   ],
   summary: {
@@ -151,5 +169,50 @@ describe("LiveOperationsPage", () => {
         screen.getByRole("button", { name: /race two scanners/i }),
       ).toBeEnabled(),
     );
+  });
+});
+
+
+describe("LiveOperationsPage exception feed", () => {
+  beforeEach(() => {
+    vi.spyOn(api, "loads").mockResolvedValue(BOARD);
+    vi.spyOn(api, "load").mockResolvedValue(DETAIL);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("lists only the loads that need a person", async () => {
+    renderWithProviders(<LiveOperationsPage />);
+
+    const feed = await screen.findByRole("region", { name: /priority loads/i });
+    expect(await within(feed).findByText("LD-1048")).toBeVisible();
+    expect(within(feed).getByText("LD-1051")).toBeVisible();
+    // On-track work is counted, not listed.
+    expect(within(feed).queryByText("LD-2100")).not.toBeInTheDocument();
+  });
+
+  it("counts the quiet loads behind a fold that can be opened", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<LiveOperationsPage />);
+
+    const feed = await screen.findByRole("region", { name: /priority loads/i });
+    const toggle = await within(feed).findByRole("button", {
+      name: /loads on track or not started/i,
+    });
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+
+    await user.click(toggle);
+
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    expect(within(feed).getByText("LD-2100")).toBeVisible();
+  });
+
+  it("selects the most urgent load by default", async () => {
+    renderWithProviders(<LiveOperationsPage />);
+
+    const detail = await screen.findByRole("region", { name: /selected load/i });
+    expect(await within(detail).findByText("LD-1048")).toBeVisible();
   });
 });

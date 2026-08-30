@@ -58,6 +58,17 @@ export function shortReason(facts: LateFacts): string | null {
   return reason ? (REASON_LABEL[reason] ?? reason) : null;
 }
 
+/**
+ * Does this load need a person?
+ *
+ * Late and unknown both do: one because the truck will miss its appointment,
+ * the other because the system cannot see the truck at all. At-risk is included
+ * so a dispatcher can act before the threshold rather than after it.
+ */
+export function needsAttention(row: BoardRow): boolean {
+  return ["late", "at_risk", "unknown"].includes(row.facts.classification);
+}
+
 /** A compact badge caption used in the priority list. */
 export function rowBadge(row: BoardRow): string {
   const { facts } = row;

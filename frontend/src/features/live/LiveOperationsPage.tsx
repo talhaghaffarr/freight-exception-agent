@@ -22,6 +22,7 @@ import {
   formatAge,
   formatClock,
   formatLateness,
+  needsAttention,
   rowBadge,
   shortReason,
 } from "./facts";
@@ -72,6 +73,7 @@ export function LiveOperationsPage() {
       : (session?.tenants[0]?.slug ?? null);
 
   const [selected, setSelected] = useState<string | null>(null);
+  const [showQuiet, setShowQuiet] = useState(false);
   const queryClient = useQueryClient();
 
   // Appointments are absolute, so a board left open drifts away from the
@@ -88,7 +90,12 @@ export function LiveOperationsPage() {
     refetchInterval: BOARD_POLL_MS,
   });
 
-  const reference = selected ?? boardQuery.data?.rows[0]?.reference ?? null;
+  const rows = boardQuery.data?.rows ?? [];
+  // The feed is the exceptions. Everything else is counted behind a fold.
+  const attention = rows.filter(needsAttention);
+  const quiet = rows.filter((row) => !needsAttention(row));
+
+  const reference = selected ?? attention[0]?.reference ?? rows[0]?.reference ?? null;
 
   const loadQuery = useQuery({
     queryKey: ["load", tenantSlug, reference],
@@ -180,7 +187,7 @@ export function LiveOperationsPage() {
       <div className="live__split">
         <section className="panel panel--list" aria-label="Priority loads">
           <header className="panel__head">
-            <h2 className="panel__title">Priority loads</h2>
+            <h2 className="panel__title">Needs action</h2>
             <span className="check__detail">Risk ↓</span>
           </header>
           {boardQuery.isPending ? (
@@ -188,16 +195,57 @@ export function LiveOperationsPage() {
           ) : boardQuery.isError ? (
             <p className="live__empty">{(boardQuery.error as Error).message}</p>
           ) : (
-            <ul className="loadlist">
-              {boardQuery.data?.rows.map((row) => (
-                <LoadRow
-                  key={row.load_id}
-                  row={row}
-                  selected={row.reference === reference}
-                  onSelect={setSelected}
-                />
-              ))}
-            </ul>
+            <>
+              {attention.length === 0 ? (
+                <p className="emptyfeed">
+                  Nothing needs a person right now. Every active load has a fresh
+                  position and an ETA inside its appointment window.
+                </p>
+              ) : (
+                <ul className="loadlist">
+                  {attention.map((row) => (
+                    <LoadRow
+                      key={row.load_id}
+                      row={row}
+                      selected={row.reference === reference}
+                      onSelect={setSelected}
+                    />
+                  ))}
+                </ul>
+              )}
+
+              {quiet.length > 0 ? (
+                <div className="quiet">
+                  <button
+                    type="button"
+                    className="quiet__toggle"
+                    onClick={() => setShowQuiet((open) => !open)}
+                    aria-expanded={showQuiet}
+                    aria-label={`${quiet.length} loads on track or not started, no action needed`}
+                  >
+                    <span className="quiet__count">{quiet.length}</span>
+                    <span className="quiet__label">
+                      on track or not started — no action
+                    </span>
+                    <span className="quiet__chevron" aria-hidden="true">
+                      {showQuiet ? "Hide" : "Show"}
+                    </span>
+                  </button>
+                  {showQuiet ? (
+                    <ul className="loadlist loadlist--quiet">
+                      {quiet.map((row) => (
+                        <LoadRow
+                          key={row.load_id}
+                          row={row}
+                          selected={row.reference === reference}
+                          onSelect={setSelected}
+                        />
+                      ))}
+                    </ul>
+                  ) : null}
+                </div>
+              ) : null}
+            </>
           )}
         </section>
 
@@ -207,8 +255,8 @@ export function LiveOperationsPage() {
             <span className="check__detail">OpenFreeMap · MapLibre</span>
           </header>
           <LoadMap
-            rows={boardQuery.data?.rows ?? []}
-            selected={boardQuery.data?.rows.find((row) => row.reference === reference) ?? null}
+            rows={rows}
+            selected={rows.find((row) => row.reference === reference) ?? null}
             onSelect={setSelected}
           />
         </section>

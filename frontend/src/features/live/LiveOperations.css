@@ -230,7 +230,7 @@
   border: 0;
   border-left: 3px solid transparent;
   background: transparent;
-  padding: var(--space-3) var(--space-4);
+  padding: 9px var(--space-4);
   cursor: pointer;
   transition: background 120ms ease;
 }
@@ -257,18 +257,22 @@
 }
 
 .loadlist__lane {
-  margin: 3px 0 0;
-  font-size: var(--text-base);
-  color: var(--text-primary);
+  margin: 1px 0 0;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .loadlist__meta {
-  margin: 3px 0 0;
+  margin: 2px 0 0;
   font-size: var(--text-xs);
   color: var(--text-muted);
   display: flex;
   gap: var(--space-3);
-  flex-wrap: wrap;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 /* ---- Status chips ---- */
@@ -286,9 +290,17 @@
 .chip--late { background: var(--tone-critical-surface); color: var(--tone-critical); }
 .chip--at_risk { background: var(--tone-warning-surface); color: var(--tone-warning); }
 .chip--unknown { background: var(--tone-neutral-surface); color: var(--tone-neutral); }
+/*
+ * Colour is an alert channel, not decoration. Only the states that need a
+ * person carry chroma; a board where forty rows are green teaches an operator
+ * to ignore colour entirely.
+ */
 .chip--on_time,
-.chip--early { background: var(--tone-positive-surface); color: var(--tone-positive); }
-.chip--scheduled { background: var(--tone-info-surface); color: var(--tone-info); }
+.chip--early,
+.chip--scheduled {
+  background: var(--tone-neutral-surface);
+  color: var(--text-secondary);
+}
 .chip--model { background: var(--tone-model-surface); color: var(--tone-model); }
 
 /* ---- Detail ---- */
@@ -648,4 +660,61 @@
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--text-muted);
+}
+
+
+/* ---- The quiet fold ----------------------------------------------------- *
+ * Loads that need nothing are counted, not listed. They stay one click away
+ * so the board can be audited, but they never compete with the exceptions.
+ */
+.quiet {
+  border-top: 1px solid var(--border-strong);
+  background: var(--surface-sunken);
+}
+
+.quiet__toggle {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: var(--text-secondary);
+}
+
+.quiet__toggle:hover {
+  background: var(--surface-app);
+}
+
+.quiet__count {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.quiet__label {
+  flex: 1;
+  font-size: var(--text-sm);
+}
+
+.quiet__chevron {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.loadlist--quiet .loadlist__button {
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+.emptyfeed {
+  padding: var(--space-5) var(--space-4);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
 }
