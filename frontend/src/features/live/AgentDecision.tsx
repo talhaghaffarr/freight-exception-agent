@@ -17,7 +17,7 @@ interface Check {
   detail: string;
 }
 
-const MARK: Record<CheckState, string> = { pass: "✓", fail: "✕", hold: "–" };
+const MARK: Record<CheckState, string> = { pass: "✓", fail: "✕", hold: "" };
 
 export function buildChecks(load: LoadDetail): Check[] {
   const { facts } = load;
@@ -97,8 +97,8 @@ export function AgentDecision({ load }: { load: LoadDetail }) {
               {MARK[check.state]}
             </span>
             <span>
-              {check.label}
-              <span className="check__detail"> · {check.detail}</span>
+              <span className="check__label">{check.label}</span>
+              <span className="check__detail">{check.detail}</span>
             </span>
           </li>
         ))}

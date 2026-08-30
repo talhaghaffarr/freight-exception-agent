@@ -32,36 +32,30 @@ export function RacePanel({ tenantSlug, reference }: { tenantSlug: string; refer
         </button>
       </header>
 
-      <div className="checks">
-        <p className="check__detail" style={{ margin: 0 }}>
+      <div className="racebody">
+        <p className="racebody__intro">
           Two connections open the same trigger at once. Enforced by{" "}
           <code>goals_idempotency_key</code>, not by worker state.
         </p>
 
         {race.isError ? (
-          <p className="check check--fail">
-            <span className="check__mark">✕</span>
-            <span>{(race.error as Error).message}</span>
-          </p>
+          <p className="racebody__error">{(race.error as Error).message}</p>
         ) : null}
 
         {result ? (
           <>
-            <ul className="checks" style={{ padding: 0 }}>
+            <ul className="attempts">
               {result.attempts.map((attempt) => (
                 <li
                   key={attempt.worker}
-                  className={`check check--${attempt.created ? "pass" : "fail"}`}
+                  className={`attempt attempt--${attempt.created ? "won" : "lost"}`}
                 >
-                  <span className="check__mark" aria-hidden="true">
-                    {attempt.created ? "✓" : "✕"}
+                  <span className="attempt__worker">{attempt.worker}</span>
+                  <span className="attempt__verdict">
+                    {attempt.created ? "INSERT" : "UNIQUE CONFLICT"}
                   </span>
-                  <span>
-                    <b>{attempt.worker}</b> → {attempt.created ? "INSERT succeeded" : "UNIQUE CONFLICT"}
-                    <span className="check__detail">
-                      {" "}
-                      · goal {attempt.goal_id.slice(0, 8)} · {attempt.duration_ms.toFixed(1)} ms
-                    </span>
+                  <span className="attempt__meta">
+                    {attempt.goal_id.slice(0, 8)} · {attempt.duration_ms.toFixed(1)}ms
                   </span>
                 </li>
               ))}

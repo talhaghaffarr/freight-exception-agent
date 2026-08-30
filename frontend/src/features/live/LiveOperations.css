@@ -23,9 +23,12 @@
 
 .live__title {
   margin: 0;
-  font-size: 22px;
+  font-family: var(--font-display);
+  font-size: 30px;
   font-weight: 600;
-  letter-spacing: -0.015em;
+  letter-spacing: 0.005em;
+  line-height: 1.05;
+  text-transform: uppercase;
 }
 
 .live__subtitle {
@@ -77,16 +80,17 @@
 }
 
 .counter__value {
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-variant-numeric: tabular-nums;
-  font-size: 24px;
+  font-size: 34px;
   font-weight: 600;
-  line-height: 1;
+  line-height: 0.9;
 }
 
 .counter__label {
   font-size: var(--text-sm);
   font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .counter__note {
@@ -198,9 +202,10 @@
 
 .panel__title {
   margin: 0;
-  font-size: var(--text-sm);
+  font-family: var(--font-display);
+  font-size: var(--text-md);
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-secondary);
 }
@@ -307,8 +312,9 @@
 .detail__ref {
   margin: 0;
   font-family: var(--font-mono);
-  font-size: var(--text-xl);
+  font-size: 22px;
   font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .detail__sub {
@@ -344,8 +350,9 @@
   margin-top: 4px;
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: var(--text-lg);
+  font-size: 17px;
   font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .fact__value--unknown {
@@ -379,42 +386,100 @@
 
 .decision__title {
   margin: 0;
-  font-size: var(--text-sm);
+  font-family: var(--font-display);
+  font-size: var(--text-md);
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-secondary);
 }
 
+/*
+ * The evidence ledger.
+ *
+ * The console's signature element: a spine of eligibility checks, each one a
+ * node on the rail with its evidence set in mono beside it. It reads top to
+ * bottom like a recorder trace, which is the point — the operator can follow
+ * exactly how the system reached its verdict.
+ */
 .checks {
   list-style: none;
   margin: 0;
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-5);
   display: grid;
-  gap: var(--space-2);
+  gap: 0;
+  position: relative;
+}
+
+/* The spine. */
+.checks::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--space-5) + 5px);
+  top: var(--space-4);
+  bottom: var(--space-4);
+  width: 1px;
+  background: var(--border-strong);
 }
 
 .check {
-  display: flex;
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr);
   align-items: baseline;
-  gap: var(--space-2);
+  column-gap: var(--space-3);
   font-size: var(--text-base);
+  padding: 5px 0;
+  position: relative;
 }
 
 .check__mark {
   font-family: var(--font-mono);
-  font-weight: 600;
-  flex: none;
-  width: 1.1em;
+  font-size: 9px;
+  line-height: 1;
+  font-weight: 700;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--surface-raised);
+  border: 1.5px solid var(--border-strong);
+  color: transparent;
+  position: relative;
+  top: 3px;
 }
 
-.check--pass .check__mark { color: var(--tone-positive); }
-.check--fail .check__mark { color: var(--tone-critical); }
-.check--hold .check__mark { color: var(--text-muted); }
+.check--pass .check__mark {
+  border-color: var(--tone-positive);
+  background: var(--tone-positive);
+  color: var(--surface-raised);
+}
+
+.check--fail .check__mark {
+  border-color: var(--tone-critical);
+  background: var(--tone-critical);
+  color: var(--surface-raised);
+}
+
+.check--hold .check__mark {
+  border-style: dashed;
+}
+
+.check__label {
+  font-weight: 500;
+}
+
+.check--fail .check__label {
+  font-weight: 600;
+}
 
 .check__detail {
+  display: block;
   color: var(--text-muted);
+  font-family: var(--font-mono);
   font-size: var(--text-xs);
+  letter-spacing: -0.01em;
+  margin-top: 1px;
 }
 
 .decision__next {
@@ -422,6 +487,16 @@
   border-top: 1px solid var(--border-subtle);
   background: var(--brand-weak);
   font-size: var(--text-base);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.decision__next b {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: var(--text-md);
 }
 
 .decision__next--held {
@@ -491,5 +566,77 @@
 .live__empty {
   padding: var(--space-6);
   text-align: center;
+  color: var(--text-muted);
+}
+
+
+/* ---- Racing scanners ---- */
+.racebody {
+  padding: var(--space-4);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.racebody__intro {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.racebody__intro code {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  background: var(--surface-sunken);
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+}
+
+.racebody__error {
+  margin: 0;
+  color: var(--tone-critical);
+  font-size: var(--text-sm);
+}
+
+.attempts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1px;
+  background: var(--border-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+/* Two workers, one row each: who ran, what the database said, how long. */
+.attempt {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-raised);
+  font-size: var(--text-sm);
+}
+
+.attempt__worker {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.attempt__verdict {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.attempt--won .attempt__verdict { color: var(--tone-positive); }
+.attempt--lost .attempt__verdict { color: var(--tone-critical); }
+
+.attempt__meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
   color: var(--text-muted);
 }
