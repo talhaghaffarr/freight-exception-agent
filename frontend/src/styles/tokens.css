@@ -2,7 +2,10 @@
  * RelayOps design tokens.
  *
  * The palette is a freight operations console: deep navy-slate navigation,
- * a cool off-white workspace, white evidence surfaces, one marine-blue accent. Semantic colour is never the
+ * a cool off-white workspace, white evidence surfaces, one marine-blue accent.
+ *
+ * Light only, deliberately. The console renders identically regardless of the
+ * viewer's system theme -- there is no dark variant. Semantic colour is never the
  * only carrier of meaning — every status also renders its name.
  */
 :root {
@@ -86,35 +89,4 @@
 
   --shadow-sm: 0 1px 2px rgba(23, 26, 31, 0.06);
   --shadow-md: 0 4px 12px rgba(23, 26, 31, 0.1);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --surface-app: #0f1520;
-    --surface-raised: #161e2c;
-    --surface-sunken: #0b111a;
-    --surface-header: #161e2c;
-    --border-subtle: #26303f;
-    --border-strong: #374357;
-    --text-primary: #e8edf4;
-    --text-secondary: #a3b0c2;
-    --text-muted: #7b8798;
-    --tone-positive: #43b98c;
-    --tone-positive-surface: #0f2f24;
-    --tone-warning: #d9a250;
-    --tone-warning-surface: #33260f;
-    --tone-critical: #ef8078;
-    --tone-critical-surface: #391a17;
-    --tone-info: #6ea8e8;
-    --tone-info-surface: #14263c;
-    --tone-neutral: #a3b0c2;
-    --tone-neutral-surface: #202a38;
-    --tone-model: #b795e8;
-    --tone-model-surface: #241a35;
-    --brand: #4f8fd4;
-    --brand-strong: #1f5b9e;
-    --brand-weak: #132a44;
-    --brand-on: #0a1626;
-  }
 }
