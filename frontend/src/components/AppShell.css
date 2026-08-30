@@ -1,0 +1,261 @@
+.shell {
+  display: grid;
+  grid-template-columns: var(--rail-width) 1fr;
+  grid-template-rows: var(--header-height) 1fr;
+  grid-template-areas:
+    "rail header"
+    "rail workspace";
+  height: 100vh;
+  overflow: hidden;
+}
+
+.shell[data-rail="expanded"] {
+  grid-template-columns: var(--rail-width-expanded) 1fr;
+}
+
+/* --- Rail --------------------------------------------------------------- */
+.shell-rail {
+  grid-area: rail;
+  background: var(--surface-nav);
+  border-right: 1px solid var(--border-nav);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.shell-rail__brand {
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3);
+  border-bottom: 1px solid var(--border-nav);
+  flex: none;
+}
+
+.shell-rail__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-on-nav);
+  cursor: pointer;
+}
+
+.shell-rail__toggle:hover {
+  background: var(--surface-nav-hover);
+  color: var(--text-on-nav-active);
+}
+
+.shell-rail__wordmark {
+  color: var(--text-on-nav-active);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.shell[data-rail="expanded"] .shell-rail__wordmark {
+  opacity: 1;
+}
+
+.shell-rail__list {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-2) var(--space-2) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+}
+
+.shell-rail__link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  height: 36px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  color: var(--text-on-nav);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.shell-rail__link:hover {
+  background: var(--surface-nav-hover);
+  color: var(--text-on-nav-active);
+}
+
+.shell-rail__link.is-active {
+  background: var(--surface-nav-active);
+  color: var(--text-on-nav-active);
+  font-weight: 500;
+}
+
+.shell-rail__label {
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.shell[data-rail="expanded"] .shell-rail__label {
+  opacity: 1;
+}
+
+/* Collapsed rail still needs an accessible name, so the label stays in the
+   accessibility tree and is only visually clipped. */
+.shell[data-rail="collapsed"] .shell-rail__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* --- Header ------------------------------------------------------------- */
+.shell-header {
+  grid-area: header;
+  background: var(--surface-header);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 0 var(--space-4);
+}
+
+.shell-header__left,
+.shell-header__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.shell-tenant {
+  height: 30px;
+  min-width: 168px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.shell-search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 30px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+  min-width: 320px;
+}
+
+.shell-search input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+  outline: none;
+  min-width: 0;
+}
+
+.shell-search__hint {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  padding: 0 4px;
+  color: var(--text-muted);
+}
+
+.shell-environment {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  padding: 3px var(--space-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+}
+
+.shell-environment[data-mode="sandbox"] {
+  color: var(--tone-info);
+  background: var(--tone-info-surface);
+  border-color: color-mix(in srgb, var(--tone-info) 24%, transparent);
+}
+.shell-environment[data-mode="allowlist"] {
+  color: var(--tone-warning);
+  background: var(--tone-warning-surface);
+  border-color: color-mix(in srgb, var(--tone-warning) 24%, transparent);
+}
+.shell-environment[data-mode="live"] {
+  color: var(--tone-critical);
+  background: var(--tone-critical-surface);
+  border-color: color-mix(in srgb, var(--tone-critical) 40%, transparent);
+}
+
+.shell-health {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.shell-health__summary {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.shell-button {
+  height: 28px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font: inherit;
+  cursor: pointer;
+}
+
+.shell-button:hover {
+  background: var(--surface-sunken);
+}
+
+.shell-user {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+/* --- Workspace ---------------------------------------------------------- */
+.shell-workspace {
+  grid-area: workspace;
+  overflow: auto;
+  padding: var(--space-5);
+}
+
+.shell-workspace:focus {
+  outline: none;
+}
+
+@media (max-width: 1100px) {
+  .shell-search {
+    min-width: 200px;
+  }
+  .shell-user {
+    display: none;
+  }
+}

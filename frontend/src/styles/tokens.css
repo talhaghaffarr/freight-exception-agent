@@ -1,0 +1,104 @@
+/*
+ * RelayOps design tokens.
+ *
+ * The palette is a freight operations console: graphite navigation, an
+ * off-white workspace, white evidence surfaces. Semantic colour is never the
+ * only carrier of meaning — every status also renders its name.
+ */
+:root {
+  color-scheme: light;
+
+  /* Neutrals */
+  --surface-app: #f6f7f9;
+  --surface-raised: #ffffff;
+  --surface-sunken: #eef0f3;
+  --surface-nav: #1c2027;
+  --surface-nav-hover: #262b34;
+  --surface-nav-active: #303743;
+  --surface-header: #ffffff;
+
+  --border-subtle: #e3e6ea;
+  --border-strong: #c9ced6;
+  --border-nav: #2c323b;
+
+  --text-primary: #171a1f;
+  --text-secondary: #545c69;
+  --text-muted: #7b838f;
+  --text-on-nav: #cbd2dc;
+  --text-on-nav-active: #ffffff;
+  --text-inverse: #ffffff;
+
+  /* Semantic tones. Purple is reserved for the narrow LLM extraction step. */
+  --tone-positive: #0f7a6c;
+  --tone-positive-surface: #e6f4f1;
+  --tone-warning: #a35c00;
+  --tone-warning-surface: #fbf0dd;
+  --tone-critical: #b3261e;
+  --tone-critical-surface: #fbe9e7;
+  --tone-info: #1f5fa8;
+  --tone-info-surface: #e6eefa;
+  --tone-neutral: #545c69;
+  --tone-neutral-surface: #eceef1;
+  --tone-model: #6b3fa0;
+  --tone-model-surface: #f0eafa;
+
+  --focus-ring: #1f5fa8;
+
+  /* Type */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "SFMono-Regular", ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-base: 13px;
+  --text-md: 14px;
+  --text-lg: 16px;
+  --text-xl: 20px;
+
+  /* Rhythm */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+
+  --rail-width: 64px;
+  --rail-width-expanded: 216px;
+  --header-height: 52px;
+  --row-height: 40px;
+
+  --shadow-sm: 0 1px 2px rgba(23, 26, 31, 0.06);
+  --shadow-md: 0 4px 12px rgba(23, 26, 31, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --surface-app: #14171c;
+    --surface-raised: #1c2027;
+    --surface-sunken: #101317;
+    --surface-header: #1c2027;
+    --border-subtle: #2b313a;
+    --border-strong: #3a414c;
+    --text-primary: #eef1f5;
+    --text-secondary: #a7b0bd;
+    --text-muted: #7b838f;
+    --tone-positive: #4cc4ae;
+    --tone-positive-surface: #10312d;
+    --tone-warning: #e0a153;
+    --tone-warning-surface: #33260f;
+    --tone-critical: #f0857c;
+    --tone-critical-surface: #351816;
+    --tone-info: #78aef0;
+    --tone-info-surface: #142438;
+    --tone-neutral: #a7b0bd;
+    --tone-neutral-surface: #22272f;
+    --tone-model: #b795e8;
+    --tone-model-surface: #241a35;
+  }
+}

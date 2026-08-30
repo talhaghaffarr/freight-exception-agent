@@ -9,6 +9,7 @@ a worker remembering what it already did.
 
 from __future__ import annotations
 
+import os
 from datetime import timedelta
 
 from celery import Celery
@@ -43,7 +44,7 @@ BEAT_SCHEDULE = {
 
 
 def build_celery_app(settings: Settings | None = None) -> Celery:
-    settings = settings or Settings.from_env({})
+    settings = settings or Settings.from_env(os.environ)
 
     app = Celery("relayops", broker=settings.celery_broker_url)
     app.conf.update(

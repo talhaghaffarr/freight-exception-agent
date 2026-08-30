@@ -62,3 +62,25 @@ def test_method_not_allowed_uses_the_envelope(client):
     response = client.post("/api/v1/meta")
     assert response.status_code == 405
     assert response.get_json()["error"]["code"] == "METHOD_NOT_ALLOWED"
+
+
+def test_factory_reads_the_process_environment_when_given_no_settings(monkeypatch):
+    """A container passes configuration in the environment and nothing else."""
+    from relayops.app import create_app
+
+    monkeypatch.setenv("DATABASE_URL", "postgresql+psycopg://u:p@example-db:5432/relayops")
+    monkeypatch.setenv("SECRET_KEY", "env-provided-key")
+
+    app = create_app()
+
+    assert app.config["SETTINGS"].database_url == (
+        "postgresql+psycopg://u:p@example-db:5432/relayops"
+    )
+    assert app.config["SECRET_KEY"] == "env-provided-key"
+
+
+def test_celery_factory_reads_the_process_environment(monkeypatch):
+    from relayops.celery_app import build_celery_app
+
+    monkeypatch.setenv("CELERY_BROKER_URL", "redis://example-broker:6379/7")
+    assert build_celery_app().conf.broker_url == "redis://example-broker:6379/7"

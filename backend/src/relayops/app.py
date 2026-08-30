@@ -8,6 +8,7 @@ PostgreSQL or Valkey.
 
 from __future__ import annotations
 
+import os
 import time
 from typing import Any
 
@@ -36,7 +37,9 @@ def create_app(
     engine: Engine | None = None,
     **overrides: Any,
 ) -> Flask:
-    settings = settings or Settings.from_env({})
+    # No settings means "read the environment": that is how every container
+    # is configured.
+    settings = settings or Settings.from_env(os.environ)
 
     configure_logging(service="web", json_output=not settings.testing)
     log = get_logger("relayops.api")
@@ -150,11 +153,12 @@ def _register_error_handlers(app: Flask, log) -> None:
 
 def _register_blueprints(app: Flask) -> None:
     from relayops.api.auth import bp as auth_bp
+    from relayops.api.dashboard import bp as dashboard_bp
     from relayops.api.health import bp as health_bp
     from relayops.api.meta import bp as meta_bp
     from relayops.api.tenants import bp as tenants_bp
 
-    for blueprint in (meta_bp, auth_bp, tenants_bp, health_bp):
+    for blueprint in (meta_bp, auth_bp, tenants_bp, health_bp, dashboard_bp):
         app.register_blueprint(blueprint, url_prefix=API_PREFIX)
 
     @app.get("/healthz")

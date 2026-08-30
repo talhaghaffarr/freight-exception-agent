@@ -28,3 +28,6 @@ test-results/
 .DS_Store
 .idea/
 .vscode/
+
+# Local non-Docker dev convenience (no secrets, but machine-specific ports)
+backend/.env.dev
