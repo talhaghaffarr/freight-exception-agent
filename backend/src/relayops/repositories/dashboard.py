@@ -63,7 +63,7 @@ def load_dashboard(
                 count(*) filter (where state = 'needs_review') as needs_review,
                 count(*) filter (where state = 'failed') as failed
             from goals{scope_clause}
-            """  # noqa: S608 - scope_clause is a literal, parameters stay bound
+            """
         ),
         params,
     ).one()
