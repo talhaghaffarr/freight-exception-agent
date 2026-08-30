@@ -23,9 +23,9 @@ export interface NavItem {
 export const NAV_ITEMS: NavItem[] = [
   { id: "overview", label: "Overview", to: "/", icon: LayoutDashboard },
   { id: "live-operations", label: "Live Operations", to: "/live", icon: Activity },
-  { id: "goals", label: "Goals", to: "/goals", icon: ListChecks, placeholder: true },
-  { id: "inbox", label: "Inbox", to: "/inbox", icon: Inbox, placeholder: true },
-  { id: "agents", label: "Agents", to: "/agents", icon: Boxes, placeholder: true },
+  { id: "goals", label: "Goals", to: "/goals", icon: ListChecks },
+  { id: "inbox", label: "Inbox", to: "/inbox", icon: Inbox },
+  { id: "agents", label: "Agents", to: "/agents", icon: Boxes },
   {
     id: "communications",
     label: "Communications",
@@ -33,7 +33,7 @@ export const NAV_ITEMS: NavItem[] = [
     icon: MessagesSquare,
     placeholder: true,
   },
-  { id: "analytics", label: "Analytics", to: "/analytics", icon: BarChart3, placeholder: true },
+  { id: "analytics", label: "Analytics", to: "/analytics", icon: BarChart3 },
   { id: "system", label: "System", to: "/system", icon: ServerCog },
-  { id: "simulator", label: "Simulator", to: "/simulator", icon: PlayCircle, placeholder: true },
+  { id: "simulator", label: "Simulator", to: "/simulator", icon: PlayCircle },
 ];

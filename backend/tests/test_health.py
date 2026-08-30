@@ -70,3 +70,38 @@ def test_each_component_records_latency_and_a_check_timestamp():
 
 def test_static_probe_satisfies_the_probe_protocol():
     assert isinstance(StaticProbe("x", "healthy"), HealthProbe)
+
+
+class TestWebOnlyProfile:
+    """A deployment without workers must not report itself broken.
+
+    On a web-only host the broker, Beat, worker and SMTP are not failed
+    dependencies -- they are not deployed. Probing them anyway would page a
+    reader about infrastructure the deployment never promised.
+    """
+
+    def test_web_only_registers_no_background_probes(self):
+        from relayops.api.health import build_probes
+        from relayops.app import create_app
+        from relayops.config import Settings
+
+        settings = Settings.from_env(
+            {"SECRET_KEY": "x", "TESTING": "true", "WEB_ONLY": "true"}
+        )
+        app = create_app(settings)
+        with app.app_context():
+            names = {probe.name for probe in build_probes()}
+
+        assert names == {"api", "database", "migrations"}
+
+    def test_full_profile_keeps_every_probe(self):
+        from relayops.api.health import build_probes
+        from relayops.app import create_app
+        from relayops.config import Settings
+
+        settings = Settings.from_env({"SECRET_KEY": "x", "TESTING": "true"})
+        app = create_app(settings)
+        with app.app_context():
+            names = {probe.name for probe in build_probes()}
+
+        assert {"valkey", "beat", "email"} <= names

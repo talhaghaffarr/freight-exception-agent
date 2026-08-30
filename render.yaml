@@ -27,3 +27,5 @@ services:
         value: "true"
       - key: MIGRATIONS_DIR
         value: /app/migrations
+      - key: WEB_ONLY
+        value: "true"

@@ -16,6 +16,8 @@ import { ALL_TENANTS, useSession } from "@/app/session";
 import type { EnvironmentMode, HealthReport } from "@/app/types";
 import { StatusBadge } from "@/components/StatusBadge";
 
+import { SandboxNotice } from "./SandboxNotice";
+
 import "./AppShell.css";
 
 const ENVIRONMENT_COPY: Record<EnvironmentMode, { label: string; title: string }> = {
@@ -198,6 +200,8 @@ export function AppShell({ children, health }: AppShellProps) {
       <main className="shell-workspace" id="workspace" tabIndex={-1}>
         {children}
       </main>
+
+      <SandboxNotice />
     </div>
   );
 }

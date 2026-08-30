@@ -33,6 +33,12 @@ def build_probes() -> list[HealthProbe]:
         ApiProbe(),
         DatabaseProbe(engine),
         MigrationsProbe(engine, settings),
+    ]
+    if settings.web_only:
+        # No worker fleet is deployed here; probing for one would report
+        # honest infrastructure as an outage.
+        return probes
+    probes += [
         ValkeyProbe(settings.celery_broker_url),
         BeatProbe(settings.celery_broker_url),
         SmtpProbe(settings.smtp_host, settings.smtp_port),

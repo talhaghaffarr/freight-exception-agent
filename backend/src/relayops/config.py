@@ -78,6 +78,10 @@ class Settings(BaseModel):
     osrm_base_url: str | None = None
 
     testing: bool = False
+    #: A deployment with no worker fleet: only api/database/migrations probes
+    #: register, so absent background services read as "not deployed", never
+    #: as failures the header nags about.
+    web_only: bool = False
     migrations_dir: str = Field(default="migrations")
 
     @model_validator(mode="after")
@@ -103,6 +107,7 @@ class Settings(BaseModel):
             ),
             "allowlist_recipients": _as_tuple(environ.get("ALLOWLIST_RECIPIENTS")),
             "testing": _as_bool(environ.get("TESTING"), field="TESTING"),
+            "web_only": _as_bool(environ.get("WEB_ONLY"), field="WEB_ONLY"),
             "openai_api_key": optional_secret("OPENAI_API_KEY"),
             "sendgrid_api_key": optional_secret("SENDGRID_API_KEY"),
             "osrm_base_url": environ.get("OSRM_BASE_URL", "").strip() or None,

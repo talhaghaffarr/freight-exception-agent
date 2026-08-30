@@ -1,58 +1,21 @@
 /**
- * Route table.
- *
- * Every destination in the navigation rail resolves to something today. Screens
- * a later increment owns render a placeholder that names the increment.
+ * Route table. Every destination in the navigation rail resolves to a screen;
+ * screens whose backend has not shipped yet carry a PreviewBanner instead of
+ * an empty placeholder.
  */
 
 import type { ReactElement } from "react";
 import { Route, Routes } from "react-router-dom";
 
+import { AgentsPage } from "@/features/agents/AgentsPage";
+import { AnalyticsPage } from "@/features/analytics/AnalyticsPage";
+import { CommunicationsPage } from "@/features/communications/CommunicationsPage";
+import { GoalTracePage } from "@/features/goals/GoalTracePage";
+import { GoalsPage } from "@/features/goals/GoalsPage";
+import { InboxPage } from "@/features/inbox/InboxPage";
 import { LiveOperationsPage } from "@/features/live/LiveOperationsPage";
 import { PlaceholderPage } from "@/features/placeholder/PlaceholderPage";
-
-const PLACEHOLDERS = [
-  {
-    path: "/goals",
-    title: "Goals",
-    increment: "Increment 2",
-    description:
-      "The goals queue and the goal trace arrive with the Late Pickup slice.",
-  },
-  {
-    path: "/inbox",
-    title: "Reactive Inbox",
-    increment: "Increment 3",
-    description:
-      "Inbound email, the safety gate ladder, and threaded replies arrive with the Reactive Email slice.",
-  },
-  {
-    path: "/agents",
-    title: "Agent Catalog",
-    increment: "Increment 5",
-    description: "Agent capabilities, versions, and tenant adoption arrive with the control plane.",
-  },
-  {
-    path: "/communications",
-    title: "Communications",
-    increment: "Increment 4",
-    description:
-      "The unified email, SMS, and voice timeline arrives with the remaining agents and channels.",
-  },
-  {
-    path: "/analytics",
-    title: "Analytics",
-    increment: "Increment 5",
-    description: "Outcome, latency, and value reporting arrives with the control plane.",
-  },
-  {
-    path: "/simulator",
-    title: "Scenario Simulator",
-    increment: "Increment 5",
-    description:
-      "Seeded scenarios, virtual time, and injected failures arrive with the control plane.",
-  },
-] as const;
+import { SimulatorPage } from "@/features/simulator/SimulatorPage";
 
 export interface AppRoutesProps {
   overview: ReactElement;
@@ -65,19 +28,13 @@ export function AppRoutes({ overview, system }: AppRoutesProps) {
       <Route path="/" element={overview} />
       <Route path="/system" element={system} />
       <Route path="/live" element={<LiveOperationsPage />} />
-      {PLACEHOLDERS.map((placeholder) => (
-        <Route
-          key={placeholder.path}
-          path={placeholder.path}
-          element={
-            <PlaceholderPage
-              title={placeholder.title}
-              increment={placeholder.increment}
-              description={placeholder.description}
-            />
-          }
-        />
-      ))}
+      <Route path="/goals" element={<GoalsPage />} />
+      <Route path="/goals/:goalId" element={<GoalTracePage />} />
+      <Route path="/inbox" element={<InboxPage />} />
+      <Route path="/agents" element={<AgentsPage />} />
+      <Route path="/communications" element={<CommunicationsPage />} />
+      <Route path="/analytics" element={<AnalyticsPage />} />
+      <Route path="/simulator" element={<SimulatorPage />} />
       <Route
         path="*"
         element={

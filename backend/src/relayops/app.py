@@ -202,10 +202,11 @@ def _register_blueprints(app: Flask) -> None:
     from relayops.api.dashboard import bp as dashboard_bp
     from relayops.api.health import bp as health_bp
     from relayops.api.meta import bp as meta_bp
+    from relayops.api.goals import bp as goals_bp
     from relayops.api.operations import bp as operations_bp
     from relayops.api.tenants import bp as tenants_bp
 
-    for blueprint in (meta_bp, auth_bp, tenants_bp, health_bp, dashboard_bp, operations_bp):
+    for blueprint in (meta_bp, auth_bp, tenants_bp, health_bp, dashboard_bp, operations_bp, goals_bp):
         app.register_blueprint(blueprint, url_prefix=API_PREFIX)
 
     @app.get("/healthz")
