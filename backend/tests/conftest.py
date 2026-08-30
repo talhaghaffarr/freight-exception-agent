@@ -1,11 +1,26 @@
-"""Shared fixtures for RelayOps backend tests."""
+"""Shared fixtures for RelayOps backend tests.
+
+Tests that touch persistence run against a real PostgreSQL server. SQLite is not
+an accepted substitute: the behaviours under test are unique constraints,
+advisory locks, ``ON CONFLICT`` semantics, and ``FOR UPDATE SKIP LOCKED``.
+"""
 
 from __future__ import annotations
 
+import os
+from collections.abc import Iterator
+from pathlib import Path
+
 import pytest
+from sqlalchemy import Engine, create_engine, text
 
 from relayops.app import create_app
 from relayops.config import Settings
+from relayops.migrations import run_migrations
+from relayops.seed import seed_demo_data
+
+DEFAULT_TEST_DATABASE_URL = "postgresql+psycopg://relayops:relayops@localhost:55432/relayops_test"
+MIGRATIONS_DIR = Path(__file__).resolve().parents[1] / "migrations"
 
 
 @pytest.fixture
@@ -29,3 +44,90 @@ def app(settings: Settings):
 @pytest.fixture
 def client(app):
     return app.test_client()
+
+
+# --- PostgreSQL-backed fixtures -----------------------------------------
+
+
+@pytest.fixture(scope="session")
+def migration_directory() -> Path:
+    return MIGRATIONS_DIR
+
+
+@pytest.fixture(scope="session")
+def database_url() -> str:
+    url = os.environ.get("TEST_DATABASE_URL", DEFAULT_TEST_DATABASE_URL)
+    engine = create_engine(url, pool_pre_ping=True)
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("select 1"))
+    except Exception as exc:  # pragma: no cover - environment guard
+        pytest.skip(f"PostgreSQL is unavailable at {url}: {exc}")
+    finally:
+        engine.dispose()
+    return url
+
+
+@pytest.fixture
+def postgres_engine(database_url: str) -> Iterator[Engine]:
+    """A clean, empty ``public`` schema for one test."""
+    engine = create_engine(database_url, future=True)
+    with engine.begin() as connection:
+        connection.exec_driver_sql("drop schema if exists public cascade; create schema public;")
+    try:
+        yield engine
+    finally:
+        engine.dispose()
+
+
+@pytest.fixture
+def migrated_engine(postgres_engine: Engine, migration_directory: Path) -> Engine:
+    run_migrations(postgres_engine, migration_directory)
+    return postgres_engine
+
+
+@pytest.fixture
+def migrated_connection(migrated_engine: Engine):
+    with migrated_engine.connect() as connection:
+        yield connection
+        connection.rollback()
+
+
+@pytest.fixture
+def seeded_engine(migrated_engine: Engine) -> Engine:
+    with migrated_engine.begin() as connection:
+        seed_demo_data(connection)
+    return migrated_engine
+
+
+@pytest.fixture
+def db_settings(database_url: str) -> Settings:
+    return Settings.from_env(
+        {
+            "SECRET_KEY": "test-only-signing-key",
+            "TESTING": "true",
+            "DATABASE_URL": database_url,
+        }
+    )
+
+
+@pytest.fixture
+def api_app(seeded_engine: Engine, db_settings: Settings):
+    application = create_app(db_settings, engine=seeded_engine)
+    application.config.update(TESTING=True)
+    return application
+
+
+@pytest.fixture
+def api_client(api_app):
+    return api_app.test_client()
+
+
+@pytest.fixture
+def login_as(api_client):
+    def _login(email: str):
+        response = api_client.post("/api/v1/auth/demo-session", json={"email": email})
+        assert response.status_code == 200, response.get_data(as_text=True)
+        return response.get_json()["data"]
+
+    return _login

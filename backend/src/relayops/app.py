@@ -13,6 +13,7 @@ from typing import Any
 
 from flask import Flask, Response, g, request
 from flask_cors import CORS
+from sqlalchemy import Engine
 from werkzeug.exceptions import HTTPException
 
 from relayops.config import Settings
@@ -29,7 +30,12 @@ from relayops.logging import configure_logging, get_logger
 API_PREFIX = "/api/v1"
 
 
-def create_app(settings: Settings | None = None, **overrides: Any) -> Flask:
+def create_app(
+    settings: Settings | None = None,
+    *,
+    engine: Engine | None = None,
+    **overrides: Any,
+) -> Flask:
     settings = settings or Settings.from_env({})
 
     configure_logging(service="web", json_output=not settings.testing)
@@ -54,11 +60,30 @@ def create_app(settings: Settings | None = None, **overrides: Any) -> Flask:
         supports_credentials=True,
     )
 
+    _register_database(app, settings, engine)
     _register_request_lifecycle(app, log)
     _register_error_handlers(app, log)
     _register_blueprints(app)
 
     return app
+
+
+def _register_database(app: Flask, settings: Settings, engine: Engine | None) -> None:
+    """Attach the engine.
+
+    When no engine is injected the factory is stored instead and resolved on
+    first use, so a unit test can build an application without PostgreSQL
+    running anywhere.
+    """
+    from relayops.api.deps import close_db
+    from relayops.db import get_engine
+
+    if engine is not None:
+        app.extensions["relayops_engine"] = engine
+    else:
+        app.extensions["relayops_engine_factory"] = lambda: get_engine(settings)
+
+    app.teardown_appcontext(close_db)
 
 
 def _register_request_lifecycle(app: Flask, log) -> None:
@@ -116,9 +141,12 @@ def _register_error_handlers(app: Flask, log) -> None:
 
 
 def _register_blueprints(app: Flask) -> None:
+    from relayops.api.auth import bp as auth_bp
     from relayops.api.meta import bp as meta_bp
+    from relayops.api.tenants import bp as tenants_bp
 
-    app.register_blueprint(meta_bp, url_prefix=API_PREFIX)
+    for blueprint in (meta_bp, auth_bp, tenants_bp):
+        app.register_blueprint(blueprint, url_prefix=API_PREFIX)
 
     @app.get("/healthz")
     def _liveness():
