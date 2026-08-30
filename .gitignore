@@ -19,6 +19,9 @@ frontend/.vite/
 playwright-report/
 test-results/
 
+# Celery Beat's local schedule state (regenerated on start)
+backend/celerybeat-schedule*
+
 # Environment
 .env
 .env.local
