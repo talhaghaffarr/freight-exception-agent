@@ -1,53 +1,53 @@
 /*
  * RelayOps design tokens.
  *
- * The palette is a freight operations console: graphite navigation, an
- * off-white workspace, white evidence surfaces. Semantic colour is never the
+ * The palette is a freight operations console: deep navy-slate navigation,
+ * a cool off-white workspace, white evidence surfaces, one marine-blue accent. Semantic colour is never the
  * only carrier of meaning — every status also renders its name.
  */
 :root {
   color-scheme: light;
 
   /* Neutrals */
-  --surface-app: #f3f6fa;
+  --surface-app: #f4f6f9;
   --surface-raised: #ffffff;
-  --surface-sunken: #eef2f8;
-  --surface-nav: #10353a;
-  --surface-nav-hover: #18464c;
-  --surface-nav-active: #1d5157;
+  --surface-sunken: #eef1f5;
+  --surface-nav: #16202e;
+  --surface-nav-hover: #1f2b3c;
+  --surface-nav-active: #28374a;
   --surface-header: #ffffff;
 
-  --border-subtle: #e3e9f1;
-  --border-strong: #d1dae6;
-  --border-nav: #1d5157;
+  --border-subtle: #e2e7ee;
+  --border-strong: #c9d2dd;
+  --border-nav: #28374a;
 
-  --text-primary: #14212e;
-  --text-secondary: #566472;
-  --text-muted: #8492a0;
-  --text-on-nav: #9fbcbc;
+  --text-primary: #182230;
+  --text-secondary: #4d5a6b;
+  --text-muted: #7b8798;
+  --text-on-nav: #8fa0b5;
   --text-on-nav-active: #ffffff;
   --text-inverse: #ffffff;
 
   /* Semantic tones. Purple is reserved for the narrow LLM extraction step. */
-  --tone-positive: #12915f;
-  --tone-positive-surface: #dcf1e6;
-  --tone-warning: #a86a10;
-  --tone-warning-surface: #f7ecd6;
-  --tone-critical: #cf4035;
-  --tone-critical-surface: #fbe5e2;
-  --tone-info: #2870c8;
-  --tone-info-surface: #e2edfb;
-  --tone-neutral: #566472;
-  --tone-neutral-surface: #e9eef5;
+  --tone-positive: #0e7a55;
+  --tone-positive-surface: #e4f2ec;
+  --tone-warning: #96610a;
+  --tone-warning-surface: #f7eeda;
+  --tone-critical: #b3261e;
+  --tone-critical-surface: #f9e8e6;
+  --tone-info: #1f5b9e;
+  --tone-info-surface: #e8eff7;
+  --tone-neutral: #4d5a6b;
+  --tone-neutral-surface: #eaeef3;
   --tone-model: #7a46d6;
   --tone-model-surface: #eee4fc;
 
-  --focus-ring: #10a294;
+  --focus-ring: #1f5b9e;
 
-  /* Brand ramp: the freight teal used for primary actions and the rail mark. */
-  --brand: #10a294;
-  --brand-strong: #0c8578;
-  --brand-weak: #dcf4f1;
+  /* Brand ramp: the marine blue used for primary actions and the rail mark. */
+  --brand: #1f5b9e;
+  --brand-strong: #174a85;
+  --brand-weak: #e8eff7;
   --brand-on: #ffffff;
 
   /* Type */
@@ -91,30 +91,30 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --surface-app: #0d1a1d;
-    --surface-raised: #132428;
-    --surface-sunken: #0a1416;
-    --surface-header: #132428;
-    --border-subtle: #1e3439;
-    --border-strong: #2a464c;
-    --text-primary: #e8f1f2;
-    --text-secondary: #9db3b7;
-    --text-muted: #7a9096;
-    --tone-positive: #3fbc8a;
-    --tone-positive-surface: #0f3327;
-    --tone-warning: #dda355;
+    --surface-app: #0f1520;
+    --surface-raised: #161e2c;
+    --surface-sunken: #0b111a;
+    --surface-header: #161e2c;
+    --border-subtle: #26303f;
+    --border-strong: #374357;
+    --text-primary: #e8edf4;
+    --text-secondary: #a3b0c2;
+    --text-muted: #7b8798;
+    --tone-positive: #43b98c;
+    --tone-positive-surface: #0f2f24;
+    --tone-warning: #d9a250;
     --tone-warning-surface: #33260f;
-    --tone-critical: #f08a80;
-    --tone-critical-surface: #3a1a17;
-    --tone-info: #6fabec;
-    --tone-info-surface: #12263a;
-    --tone-neutral: #9db3b7;
-    --tone-neutral-surface: #1b2f34;
+    --tone-critical: #ef8078;
+    --tone-critical-surface: #391a17;
+    --tone-info: #6ea8e8;
+    --tone-info-surface: #14263c;
+    --tone-neutral: #a3b0c2;
+    --tone-neutral-surface: #202a38;
     --tone-model: #b795e8;
     --tone-model-surface: #241a35;
-    --brand: #2fc4b2;
-    --brand-strong: #10a294;
-    --brand-weak: #0f3a37;
-    --brand-on: #04211e;
+    --brand: #4f8fd4;
+    --brand-strong: #1f5b9e;
+    --brand-weak: #132a44;
+    --brand-on: #0a1626;
   }
 }

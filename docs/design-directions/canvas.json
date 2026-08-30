@@ -1,0 +1,17 @@
+{
+  "pages": [
+    { "id": "page-1", "name": "Final" },
+    { "id": "page-2", "name": "Explorations" }
+  ],
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 1280, "h": 864, "title": "Exception Desk — final", "page": "page-1" },
+    { "file": "DispatchWall.dc.html", "x": 0, "y": 0, "w": 1280, "h": 864, "title": "A · Dispatch Wall", "page": "page-2" },
+    { "file": "LifecycleRail.dc.html", "x": 1400, "y": 0, "w": 1280, "h": 864, "title": "C · Lifecycle Rail", "page": "page-2" },
+    { "file": "NightTower.dc.html", "x": 0, "y": 1030, "w": 1280, "h": 864, "title": "D · Night Tower", "page": "page-2" }
+  ],
+  "annotations": [
+    { "id": "final-palette", "x": 0, "y": -240, "w": 620, "page": "page-1", "text": "Direction B built as the final, in the professional palette now live in the app:\n\n• Rail #16202e (navy-slate) · accent #1f5b9e (marine blue)\n• Alerts: #b3261e critical · #96610a warning · #0e7a55 positive\n• Quiet states carry no chroma — color is an alert channel\n• Type unchanged: Barlow / Barlow Condensed / IBM Plex Mono\n\nThe unchosen explorations (A, C, D) live on the Explorations page, kept in their original teal for comparison." },
+    { "id": "research-summary", "x": 0, "y": -260, "w": 620, "page": "page-2", "text": "What the research says, and which direction carries it:\n\n• Wise Systems — live map as the workspace, color-coded routes, drag re-sequencing → A\n• Turvo — exceptions fast to resolve; issue + impact + recommended action in one view → B (chosen); screens follow the shipment lifecycle → C\n• Samsara — left rail, map-first, collapsible panels → A and D\n• Dashboard practice — chroma only for alerts, dense rows, one prioritized action feed → applied to all four" }
+  ],
+  "launch": { "view": "canvas", "page": "page-1" }
+}

@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; font-family: "Barlow", system-ui, sans-serif; }
+    a { color: #10a294; } a:hover { color: #0c8578; }
+  </style>
+</helmet>
+<div style="width: 1280px; height: 864px; display: flex; flex-direction: column; background: #f3f6fa; overflow: hidden">
+
+  <div style="height: 64px; background: #10353a; color: #e8f1f2; display: flex; align-items: center; gap: 16px; padding: 0 20px; flex: 0 0 auto">
+    <div style="width: 34px; height: 34px; border-radius: 8px; background: #7a46d6; color: #ffffff; display: grid; place-items: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px">C</div>
+    <div style="display: flex; flex-direction: column; line-height: 1.15">
+      <div style="font-family: 'Barlow Condensed', sans-serif; font-size: 21px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase">Lifecycle Rail</div>
+      <div style="font-size: 12px; color: #9db3b7">Axis — Turvo: screens follow the shipment lifecycle</div>
+    </div>
+    <div style="flex: 1"></div>
+    <div style="display: flex; flex-direction: column; gap: 2px; font-size: 11.5px; color: #9db3b7; max-width: 520px; text-align: right">
+      <div><span style="color: #2fc4b2; font-weight: 600">Motivation</span> — loads read left-to-right the way brokers think; exceptions appear in phase context</div>
+      <div><span style="color: #dda355; font-weight: 600">Tradeoff</span> — no map on the main screen; can read as project kanban</div>
+    </div>
+  </div>
+
+  <div style="flex: 1; display: flex; min-height: 0">
+    <div style="width: 60px; background: #10353a; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 12px 0; flex: 0 0 auto">
+      <div style="width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(150deg, #10a294, #37c6b6); color: #04211e; display: grid; place-items: center; font-weight: 700; font-size: 15px; margin-bottom: 8px">R</div>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9fbcbc" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>
+      <div style="width: 40px; height: 36px; border-radius: 8px; background: #1d5157; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><rect x="3" y="4" width="5" height="16" rx="1"></rect><rect x="10" y="4" width="5" height="16" rx="1"></rect><rect x="17" y="4" width="5" height="16" rx="1"></rect></svg></div>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9fbcbc" stroke-width="2"><path d="M4 6h12"></path><path d="M4 12h12"></path><path d="M4 18h12"></path><circle cx="20" cy="6" r="1.5"></circle><circle cx="20" cy="12" r="1.5"></circle><circle cx="20" cy="18" r="1.5"></circle></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9fbcbc" stroke-width="2"><path d="M3 8l9-5 9 5v8l-9 5-9-5z"></path><path d="M3 8l9 5 9-5"></path></svg>
+    </div>
+
+    <div style="flex: 1; display: flex; flex-direction: column; min-width: 0; padding: 16px 18px; gap: 12px">
+      <div style="display: flex; align-items: center; gap: 14px">
+        <div style="font-family: 'Barlow Condensed', sans-serif; font-size: 27px; font-weight: 600; text-transform: uppercase; color: #14212e">Load lifecycle</div>
+        <div style="font-size: 12px; color: #8492a0">48 active · Atlas Brokerage · Sunday Aug 30</div>
+        <div style="flex: 1"></div>
+        <div style="background: #f7ecd6; color: #a86a10; font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; padding: 4px 11px; border-radius: 999px; text-transform: uppercase">Sandbox · no external sends</div>
+      </div>
+
+      <div style="flex: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; min-height: 0">
+
+        <div style="background: #eef2f8; border: 1px solid #e3e9f1; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden">
+          <div style="padding: 10px 14px; display: flex; align-items: baseline; gap: 8px; border-bottom: 1px solid #e3e9f1"><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #566472">Pre-pickup</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8492a0">36</span></div>
+          <div style="padding: 10px; display: flex; flex-direction: column; gap: 8px">
+            <div style="background: #ffffff; border: 1px solid #e3e9f1; border-radius: 8px; padding: 8px 12px"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; font-weight: 600">LD-2100</div><div style="font-size: 11px; color: #8492a0">Indianapolis → Nashville · 11:34 PM</div></div>
+            <div style="background: #ffffff; border: 1px solid #e3e9f1; border-radius: 8px; padding: 8px 12px"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; font-weight: 600">LD-2101</div><div style="font-size: 11px; color: #8492a0">St. Louis → Oklahoma City · 12:11 AM</div></div>
+            <div style="background: #ffffff; border: 1px solid #e3e9f1; border-radius: 8px; padding: 8px 12px"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; font-weight: 600">LD-2102</div><div style="font-size: 11px; color: #8492a0">Denver → Kansas City · 12:48 AM</div></div>
+            <div style="text-align: center; font-size: 11.5px; color: #8492a0; padding: 4px">+ 33 more</div>
+          </div>
+        </div>
+
+        <div style="background: #eef2f8; border: 1px solid #e3e9f1; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden">
+          <div style="padding: 10px 14px; display: flex; align-items: baseline; gap: 8px; border-bottom: 1px solid #e3e9f1; border-top: 3px solid #cf4035"><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #566472">Pickup window</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #cf4035; font-weight: 600">5 · 3 flagged</span></div>
+          <div style="padding: 10px; display: flex; flex-direction: column; gap: 8px">
+            <div style="background: #ffffff; border: 1px solid #cf4035; border-radius: 8px; padding: 10px 12px; box-shadow: 0 6px 18px rgba(207,64,53,0.12)">
+              <div style="display: flex; gap: 8px; align-items: center"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600">LD-1048</span><span style="background: #fbe5e2; color: #cf4035; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 999px">+38 min</span></div>
+              <div style="font-size: 11px; color: #566472; margin-top: 2px">Chicago → Dallas · ACME Retail</div>
+              <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 4px; font-size: 10.5px; font-family: 'IBM Plex Mono', monospace">
+                <div style="display: flex; gap: 8px; align-items: center"><span style="width: 8px; height: 8px; border-radius: 50%; background: #12915f"></span><span style="color: #566472">Checked in · Chicago yard</span><span style="flex: 1"></span><span style="color: #8492a0">08:56</span></div>
+                <div style="display: flex; gap: 8px; align-items: center"><span style="width: 8px; height: 8px; border-radius: 50%; background: #cf4035"></span><span style="color: #14212e; font-weight: 600">En route · 136 mi left</span><span style="flex: 1"></span><span style="color: #8492a0">now</span></div>
+                <div style="display: flex; gap: 8px; align-items: center"><span style="width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #c9ced6; background: #ffffff"></span><span style="color: #566472">Appt 10:00 · ETA 10:38</span><span style="flex: 1"></span><span style="color: #cf4035; font-weight: 600">+38</span></div>
+              </div>
+              <div style="margin-top: 8px; display: flex; gap: 6px"><span style="background: #10a294; color: #ffffff; font-size: 10.5px; font-weight: 600; padding: 5px 10px; border-radius: 6px">Notify AM</span><span style="border: 1px solid #d1dae6; font-size: 10.5px; font-weight: 600; padding: 5px 10px; border-radius: 6px">Trace</span></div>
+            </div>
+            <div style="background: #ffffff; border: 1px solid #e3e9f1; border-left: 3px solid #a86a10; border-radius: 8px; padding: 8px 12px"><div style="display: flex; gap: 8px; align-items: center"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; font-weight: 600">LD-1062</span><span style="background: #f7ecd6; color: #a86a10; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 999px">+22 min</span></div><div style="font-size: 11px; color: #8492a0">Columbus → Memphis · watch</div></div>
+            <div style="background: #ffffff; border: 1px solid #e3e9f1; border-left: 3px solid #8492a0; border-radius: 8px; padding: 8px 12px"><div style="display: flex; gap: 8px; align-items: center"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; font-weight: 600">LD-1051</span><span style="background: #e9eef5; color: #566472; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 999px">No signal</span></div><div style="font-size: 11px; color: #8492a0">Detroit → Nashville · stale 42m</div></div>
+          </div>
+        </div>
+
+        <div style="background: #eef2f8; border: 1px solid #e3e9f1; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden">
+          <div style="padding: 10px 14px; display: flex; align-items: baseline; gap: 8px; border-bottom: 1px solid #e3e9f1"><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #566472">In transit</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8492a0">6 · 1 flagged</span></div>
+          <div style="padding: 10px; display: flex; flex-direction: column; gap: 8px">
+            <div style="background: #ffffff; border: 1px solid #e3e9f1; border-left: 3px solid #8492a0; border-radius: 8px; padding: 8px 12px"><div style="display: flex; gap: 8px; align-items: center"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; font-weight: 600">LD-1071</span><span style="background: #e9eef5; color: #566472; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 999px">No signal</span></div><div style="font-size: 11px; color: #8492a0">Louisville → Charlotte · stale 31m</div></div>
+            <div style="background: #ffffff; border: 1px solid #e3e9f1; border-radius: 8px; padding: 8px 12px"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; font-weight: 600">LD-1068</div><div style="font-size: 11px; color: #8492a0">Atlanta → Orlando · on time</div></div>
+            <div style="background: #ffffff; border: 1px solid #e3e9f1; border-radius: 8px; padding: 8px 12px"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; font-weight: 600">LD-2105</div><div style="font-size: 11px; color: #8492a0">Omaha → Chicago · on time</div></div>
+            <div style="text-align: center; font-size: 11.5px; color: #8492a0; padding: 4px">+ 3 more</div>
+          </div>
+        </div>
+
+        <div style="background: #eef2f8; border: 1px solid #e3e9f1; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden">
+          <div style="padding: 10px 14px; display: flex; align-items: baseline; gap: 8px; border-bottom: 1px solid #e3e9f1"><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #566472">At delivery</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8492a0">1 · detention watch</span></div>
+          <div style="padding: 10px; display: flex; flex-direction: column; gap: 8px">
+            <div style="background: #ffffff; border: 1px solid #e3e9f1; border-left: 3px solid #a86a10; border-radius: 8px; padding: 8px 12px"><div style="display: flex; gap: 8px; align-items: center"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; font-weight: 600">LD-1083</span><span style="background: #f7ecd6; color: #a86a10; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 999px">At dock 92m</span></div><div style="font-size: 11px; color: #8492a0">Savannah yard · detention risk</div></div>
+            <div style="border: 1px dashed #c9ced6; border-radius: 8px; padding: 10px 12px; font-size: 11px; color: #8492a0; background: #f3f6fa">Detention and POD agents are specified, not yet built. This column is where their goals will land.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

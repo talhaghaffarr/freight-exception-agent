@@ -28,13 +28,13 @@ interface LoadMapProps {
 function markerColor(row: BoardRow): string {
   switch (row.facts.classification) {
     case "late":
-      return "#cf4035";
+      return "#b3261e";
     case "at_risk":
-      return "#a86a10";
+      return "#96610a";
     case "unknown":
-      return "#8492a0";
+      return "#7b8798";
     default:
-      return "#12915f";
+      return "#0e7a55";
   }
 }
 
@@ -150,7 +150,7 @@ export function LoadMap({ rows, selected, onSelect }: LoadMapProps) {
         type: "line",
         source: "selected-leg",
         layout: { "line-cap": "round" },
-        paint: { "line-color": "#10a294", "line-width": 3, "line-dasharray": [2, 1.4] },
+        paint: { "line-color": "#1f5b9e", "line-width": 3, "line-dasharray": [2, 1.4] },
       });
     }
 

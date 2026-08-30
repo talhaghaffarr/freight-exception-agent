@@ -38,3 +38,6 @@ backend/.env.dev
 # Walkthrough video workspace (parked; not part of the app build)
 video/node_modules/
 video/out/
+
+# Design canvas: keep the .dc.html sources, not the ~2MB seeded page
+docs/design-directions/relayops-console.html
