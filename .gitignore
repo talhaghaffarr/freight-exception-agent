@@ -41,3 +41,5 @@ video/out/
 
 # Design canvas: keep the .dc.html sources, not the ~2MB seeded page
 docs/design-directions/relayops-console.html
+video/.venv-tts/
+video/narration/*.wav
