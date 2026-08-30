@@ -10,12 +10,13 @@ from __future__ import annotations
 
 import os
 import time
+from pathlib import Path
 from typing import Any
 
-from flask import Flask, Response, g, request
+from flask import Flask, Response, g, request, send_from_directory
 from flask_cors import CORS
 from sqlalchemy import Engine
-from werkzeug.exceptions import HTTPException
+from werkzeug.exceptions import HTTPException, NotFound
 
 from relayops.config import Settings
 from relayops.errors import (
@@ -35,6 +36,7 @@ def create_app(
     settings: Settings | None = None,
     *,
     engine: Engine | None = None,
+    console_dist: str | None = None,
     **overrides: Any,
 ) -> Flask:
     # No settings means "read the environment": that is how every container
@@ -68,8 +70,52 @@ def create_app(
     _register_request_lifecycle(app, log)
     _register_error_handlers(app, log)
     _register_blueprints(app)
+    _register_console(app, console_dist)
 
     return app
+
+
+def _resolve_console_dist(explicit: str | None) -> Path | None:
+    """Locate a compiled console, if one was shipped alongside the API.
+
+    Deployments build the SPA into the image and serve it from this process,
+    which keeps the hosted demo to a single container. Development runs the
+    Vite dev server instead and this returns ``None``.
+    """
+    candidates = [explicit, os.environ.get("CONSOLE_DIST")]
+    for candidate in candidates:
+        if candidate:
+            path = Path(candidate)
+            return path if (path / "index.html").is_file() else None
+
+    bundled = Path(__file__).resolve().parents[2] / "console"
+    if (bundled / "index.html").is_file():
+        return bundled
+    return None
+
+
+def _register_console(app: Flask, explicit: str | None) -> None:
+    dist = _resolve_console_dist(explicit)
+    if dist is None:
+        return
+
+    index = (dist / "index.html").read_text()
+
+    @app.get("/")
+    def _console_root():
+        return Response(index, mimetype="text/html")
+
+    # Registered last and excluding the API prefix, so an unknown endpoint under
+    # /api still resolves to the JSON 404 handler rather than to the SPA shell.
+    @app.get("/<path:resource>")
+    def _console_asset(resource: str):
+        if resource.startswith("api/") or resource == "healthz":
+            raise NotFound()
+        candidate = (dist / resource).resolve()
+        if candidate.is_file() and candidate.is_relative_to(dist.resolve()):
+            return send_from_directory(dist, resource)
+        # Any other path is a client-side route; the SPA resolves it.
+        return Response(index, mimetype="text/html")
 
 
 def _register_database(app: Flask, settings: Settings, engine: Engine | None) -> None:

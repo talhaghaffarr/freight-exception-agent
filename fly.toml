@@ -1,0 +1,43 @@
+# Fly.io deployment.
+#
+# One web machine. PostgreSQL and Redis are external managed services (see
+# docs/deploying.md) so the free tiers of Neon and Upstash can be used rather
+# than a paid Fly Postgres cluster.
+
+app = "relayops-demo"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  ENVIRONMENT_MODE = "sandbox"
+  MIGRATE_ON_BOOT = "true"
+  SEED_ON_BOOT = "true"
+  MIGRATIONS_DIR = "/app/migrations"
+  PORT = "8080"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  # Zero when idle: a demo nobody is looking at should not cost anything. The
+  # first request after a pause pays a cold start of a few seconds.
+  min_machines_running = 0
+
+  [http_service.concurrency]
+    type = "requests"
+    soft_limit = 40
+    hard_limit = 80
+
+[[http_service.checks]]
+  grace_period = "20s"
+  interval = "30s"
+  method = "GET"
+  path = "/healthz"
+  timeout = "5s"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
