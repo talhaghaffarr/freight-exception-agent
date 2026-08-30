@@ -31,6 +31,23 @@ def _as_bool(raw: str | bool | None, *, field: str) -> bool:
     raise ValueError(f"{field} must be a boolean-like value, got {raw!r}")
 
 
+def _normalise_database_url(url: str) -> str:
+    """Coerce a generic Postgres URL onto the psycopg driver this app ships.
+
+    Managed providers hand out ``postgresql://`` (Heroku-era tooling emits
+    ``postgres://``); SQLAlchemy would resolve both to the psycopg2 driver,
+    which is deliberately not installed. An explicit ``+driver`` is respected.
+    """
+    url = url.strip()
+    if url.startswith("postgresql+") :
+        return url
+    if url.startswith("postgresql://"):
+        return "postgresql+psycopg://" + url[len("postgresql://"):]
+    if url.startswith("postgres://"):
+        return "postgresql+psycopg://" + url[len("postgres://"):]
+    return url
+
+
 def _as_tuple(raw: str | None) -> tuple[str, ...]:
     if not raw:
         return ()
@@ -91,8 +108,10 @@ class Settings(BaseModel):
             "osrm_base_url": environ.get("OSRM_BASE_URL", "").strip() or None,
         }
 
+        if raw_db := environ.get("DATABASE_URL"):
+            provided["database_url"] = _normalise_database_url(raw_db)
+
         for field, key in (
-            ("database_url", "DATABASE_URL"),
             ("celery_broker_url", "CELERY_BROKER_URL"),
             ("celery_result_backend", "CELERY_RESULT_BACKEND"),
             ("smtp_host", "SMTP_HOST"),
