@@ -9,45 +9,51 @@
   color-scheme: light;
 
   /* Neutrals */
-  --surface-app: #f6f7f9;
+  --surface-app: #f3f6fa;
   --surface-raised: #ffffff;
-  --surface-sunken: #eef0f3;
-  --surface-nav: #1c2027;
-  --surface-nav-hover: #262b34;
-  --surface-nav-active: #303743;
+  --surface-sunken: #eef2f8;
+  --surface-nav: #10353a;
+  --surface-nav-hover: #18464c;
+  --surface-nav-active: #1d5157;
   --surface-header: #ffffff;
 
-  --border-subtle: #e3e6ea;
-  --border-strong: #c9ced6;
-  --border-nav: #2c323b;
+  --border-subtle: #e3e9f1;
+  --border-strong: #d1dae6;
+  --border-nav: #1d5157;
 
-  --text-primary: #171a1f;
-  --text-secondary: #545c69;
-  --text-muted: #7b838f;
-  --text-on-nav: #cbd2dc;
+  --text-primary: #14212e;
+  --text-secondary: #566472;
+  --text-muted: #8492a0;
+  --text-on-nav: #9fbcbc;
   --text-on-nav-active: #ffffff;
   --text-inverse: #ffffff;
 
   /* Semantic tones. Purple is reserved for the narrow LLM extraction step. */
-  --tone-positive: #0f7a6c;
-  --tone-positive-surface: #e6f4f1;
-  --tone-warning: #a35c00;
-  --tone-warning-surface: #fbf0dd;
-  --tone-critical: #b3261e;
-  --tone-critical-surface: #fbe9e7;
-  --tone-info: #1f5fa8;
-  --tone-info-surface: #e6eefa;
-  --tone-neutral: #545c69;
-  --tone-neutral-surface: #eceef1;
-  --tone-model: #6b3fa0;
-  --tone-model-surface: #f0eafa;
+  --tone-positive: #12915f;
+  --tone-positive-surface: #dcf1e6;
+  --tone-warning: #a86a10;
+  --tone-warning-surface: #f7ecd6;
+  --tone-critical: #cf4035;
+  --tone-critical-surface: #fbe5e2;
+  --tone-info: #2870c8;
+  --tone-info-surface: #e2edfb;
+  --tone-neutral: #566472;
+  --tone-neutral-surface: #e9eef5;
+  --tone-model: #7a46d6;
+  --tone-model-surface: #eee4fc;
 
-  --focus-ring: #1f5fa8;
+  --focus-ring: #10a294;
+
+  /* Brand ramp: the freight teal used for primary actions and the rail mark. */
+  --brand: #10a294;
+  --brand-strong: #0c8578;
+  --brand-weak: #dcf4f1;
+  --brand-on: #ffffff;
 
   /* Type */
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+  --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
-  --font-mono: "SFMono-Regular", ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
   --text-xs: 11px;
   --text-sm: 12px;
   --text-base: 13px;
@@ -79,26 +85,30 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --surface-app: #14171c;
-    --surface-raised: #1c2027;
-    --surface-sunken: #101317;
-    --surface-header: #1c2027;
-    --border-subtle: #2b313a;
-    --border-strong: #3a414c;
-    --text-primary: #eef1f5;
-    --text-secondary: #a7b0bd;
-    --text-muted: #7b838f;
-    --tone-positive: #4cc4ae;
-    --tone-positive-surface: #10312d;
-    --tone-warning: #e0a153;
+    --surface-app: #0d1a1d;
+    --surface-raised: #132428;
+    --surface-sunken: #0a1416;
+    --surface-header: #132428;
+    --border-subtle: #1e3439;
+    --border-strong: #2a464c;
+    --text-primary: #e8f1f2;
+    --text-secondary: #9db3b7;
+    --text-muted: #7a9096;
+    --tone-positive: #3fbc8a;
+    --tone-positive-surface: #0f3327;
+    --tone-warning: #dda355;
     --tone-warning-surface: #33260f;
-    --tone-critical: #f0857c;
-    --tone-critical-surface: #351816;
-    --tone-info: #78aef0;
-    --tone-info-surface: #142438;
-    --tone-neutral: #a7b0bd;
-    --tone-neutral-surface: #22272f;
+    --tone-critical: #f08a80;
+    --tone-critical-surface: #3a1a17;
+    --tone-info: #6fabec;
+    --tone-info-surface: #12263a;
+    --tone-neutral: #9db3b7;
+    --tone-neutral-surface: #1b2f34;
     --tone-model: #b795e8;
     --tone-model-surface: #241a35;
+    --brand: #2fc4b2;
+    --brand-strong: #10a294;
+    --brand-weak: #0f3a37;
+    --brand-on: #04211e;
   }
 }

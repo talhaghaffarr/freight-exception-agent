@@ -32,3 +32,13 @@ if (!window.ResizeObserver) {
     disconnect() {}
   } as unknown as typeof ResizeObserver;
 }
+
+/*
+ * MapLibre creates its worker from a blob URL at import time, which jsdom does
+ * not implement. The map itself is not under test here — the facts panels are —
+ * so a stub is enough to let the module load.
+ */
+if (typeof window !== "undefined" && typeof window.URL.createObjectURL !== "function") {
+  window.URL.createObjectURL = () => "blob:relayops-test";
+  window.URL.revokeObjectURL = () => {};
+}

@@ -5,7 +5,16 @@
  * a contract rather than on a message string.
  */
 
-import type { ApiEnvelope, Dashboard, HealthReport, Session } from "./types";
+import type {
+  ApiEnvelope,
+  BoardResponse,
+  Dashboard,
+  GoalTrace,
+  HealthReport,
+  LoadDetail,
+  RaceResult,
+  Session,
+} from "./types";
 
 export const API_BASE = "/api/v1";
 
@@ -22,7 +31,10 @@ export class ApiError extends Error {
   }
 }
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+async function requestEnvelope<T>(
+  path: string,
+  init: RequestInit = {},
+): Promise<ApiEnvelope<T>> {
   const response = await fetch(`${API_BASE}${path}`, {
     credentials: "same-origin",
     headers: {
@@ -54,7 +66,11 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   if (!envelope) {
     throw new ApiError("MALFORMED_RESPONSE", `${path} did not return JSON.`, response.status);
   }
-  return envelope.data;
+  return envelope;
+}
+
+async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+  return (await requestEnvelope<T>(path, init)).data;
 }
 
 export const api = {
@@ -69,6 +85,34 @@ export const api = {
   dashboard: (tenantSlug: string | null) =>
     request<Dashboard>(
       `/dashboard${tenantSlug && tenantSlug !== "all" ? `?tenant=${encodeURIComponent(tenantSlug)}` : ""}`,
+    ),
+  loads: async (tenantSlug: string): Promise<BoardResponse> => {
+    const envelope = await requestEnvelope<BoardResponse["rows"]>(
+      `/tenants/${encodeURIComponent(tenantSlug)}/loads`,
+    );
+    return {
+      rows: envelope.data,
+      summary: envelope.meta?.summary as BoardResponse["summary"],
+      generatedAt: (envelope.meta?.generated_at as string) ?? null,
+    };
+  },
+  load: (tenantSlug: string, reference: string) =>
+    request<LoadDetail>(
+      `/tenants/${encodeURIComponent(tenantSlug)}/loads/${encodeURIComponent(reference)}`,
+    ),
+  raceScanners: (tenantSlug: string, reference: string) =>
+    request<RaceResult>(`/tenants/${encodeURIComponent(tenantSlug)}/demo/race`, {
+      method: "POST",
+      body: JSON.stringify({ reference }),
+    }),
+  resetDemo: (tenantSlug: string) =>
+    request<{ goals_cleared: number; loads_reseeded: number }>(
+      `/tenants/${encodeURIComponent(tenantSlug)}/demo/reset`,
+      { method: "POST", body: JSON.stringify({}) },
+    ),
+  goalTrace: (tenantSlug: string, goalId: string) =>
+    request<GoalTrace>(
+      `/tenants/${encodeURIComponent(tenantSlug)}/goals/${encodeURIComponent(goalId)}/trace`,
     ),
 };
 

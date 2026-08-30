@@ -21,7 +21,7 @@ from relayops.facts.tracking import (
     require_aware,
 )
 
-Classification = Literal["early", "on_time", "at_risk", "late", "unknown"]
+Classification = Literal["scheduled", "early", "on_time", "at_risk", "late", "unknown"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -34,6 +34,8 @@ class LatePickupConfig:
 
     late_threshold_minutes: int = 30
     early_threshold_minutes: int = 15
+    #: Beyond this much slack a pickup has not started rather than being early.
+    planning_horizon_minutes: int = 240
     max_tracking_age: timedelta = DEFAULT_MAX_TRACKING_AGE
     fresh_within: timedelta = DEFAULT_FRESH_WITHIN
 
@@ -152,6 +154,9 @@ def late_pickup_facts(
         classification: Classification = "late"
     elif delta_minutes > 0:
         classification = "at_risk"
+    elif delta_minutes <= -config.planning_horizon_minutes:
+        # Far more slack than a working day's dispatch: not early, not started.
+        classification = "scheduled"
     elif delta_minutes <= -config.early_threshold_minutes:
         classification = "early"
     else:

@@ -197,3 +197,24 @@ def race_scanners(
         goals_created=goals_created,
         opened_events=opened_events,
     )
+
+
+def reset_demo(engine: Engine, tenant_id: uuid.UUID) -> dict[str, int]:
+    """Re-anchor the demo to now and clear the goals this tenant's agents opened.
+
+    Appointments are stored as absolute timestamps, so a board seeded an hour
+    ago drifts: a load seeded 38 minutes late reads as 98 minutes late later on.
+    Re-seeding restores the intended figures, and dropping the demo goals lets
+    the eligibility ladder and the racing-scanner demonstration run from a clean
+    state again.
+    """
+    from relayops.seed_freight import seed_freight
+
+    with engine.begin() as connection:
+        removed = connection.execute(
+            text("delete from goals where tenant_id = :tenant_id"),
+            {"tenant_id": tenant_id},
+        ).rowcount
+        summary = seed_freight(connection)
+
+    return {"goals_cleared": removed or 0, "loads_reseeded": summary.loads}

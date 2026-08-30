@@ -51,6 +51,8 @@ select
     p.completed_at      as pickup_completed_at,
     d.city              as destination_city,
     d.state             as destination_state,
+    d.latitude          as destination_latitude,
+    d.longitude         as destination_longitude,
     d.appointment_start as delivery_appointment_start,
     lg.distance_meters  as remaining_meters,
     lg.expected_duration_seconds as remaining_seconds
@@ -80,6 +82,8 @@ class BoardRow:
     driver_name: str | None
     origin: str
     destination: str
+    origin_point: tuple[float, float] | None
+    destination_point: tuple[float, float] | None
     current_position_label: str | None
     pickup_appointment: datetime | None
     facts: LatePickupFacts
@@ -93,12 +97,18 @@ class BoardRow:
         no number, so it must not sink to the bottom of the board behind loads
         that are merely a few minutes behind.
         """
-        by_class = {"late": 0, "unknown": 1, "at_risk": 2, "on_time": 3, "early": 4}
+        by_class = {"late": 0, "unknown": 1, "at_risk": 2, "on_time": 3, "early": 4, "scheduled": 5}
         return by_class.get(self.facts.classification, 5)
 
 
 def _label(city: str | None, state: str | None) -> str:
     return ", ".join(part for part in (city, state) if part) or "Unknown"
+
+
+def _point(latitude: float | None, longitude: float | None) -> tuple[float, float] | None:
+    if latitude is None or longitude is None:
+        return None
+    return (latitude, longitude)
 
 
 def _row_to_view(row) -> tuple[LoadView, RouteEstimate | None]:
@@ -189,6 +199,8 @@ def load_board(
                 driver_name=row.driver_name,
                 origin=_label(row.pickup_city, row.pickup_state),
                 destination=_label(row.destination_city, row.destination_state),
+                origin_point=_point(row.pickup_latitude, row.pickup_longitude),
+                destination_point=_point(row.destination_latitude, row.destination_longitude),
                 current_position_label=None,
                 pickup_appointment=row.pickup_appointment_start,
                 facts=facts,

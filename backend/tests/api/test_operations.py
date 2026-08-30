@@ -89,3 +89,27 @@ def test_the_race_goal_is_readable_as_a_trace(freight_api_client, freight_login_
 
     assert trace["goal"]["agent_type"] == "late_pickup"
     assert [event["event_type"] for event in trace["events"]] == ["opened"]
+
+
+def test_resetting_the_demo_restores_the_intended_lateness(
+    freight_api_client, freight_login_as
+) -> None:
+    """The board is re-anchored to now, so the flagship figure is exact again."""
+    freight_login_as("admin@atlas.demo")
+    freight_api_client.post(
+        "/api/v1/tenants/atlas-brokerage/demo/race", json={"reference": "LD-1048"}
+    )
+
+    reset = freight_api_client.post("/api/v1/tenants/atlas-brokerage/demo/reset")
+    assert reset.status_code == 200
+    assert reset.get_json()["data"]["goals_cleared"] >= 1
+
+    body = freight_api_client.get("/api/v1/tenants/atlas-brokerage/loads").get_json()
+    rows = {row["reference"]: row for row in body["data"]}
+    assert rows["LD-1048"]["facts"]["minutes_late"] == 38
+
+
+def test_reset_is_scoped_to_the_callers_tenant(freight_api_client, freight_login_as) -> None:
+    freight_login_as("manager@meridian.demo")
+
+    assert freight_api_client.post("/api/v1/tenants/atlas-brokerage/demo/reset").status_code == 404

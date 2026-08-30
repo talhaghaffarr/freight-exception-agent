@@ -41,7 +41,7 @@
 - Produces: `GoalRepository.open_or_get(request: OpenGoalRequest) -> tuple[Goal, bool]`
 - Consumes: Increment 1 database engine and migrations
 
-- [ ] **Step 1: Write the failing tenant-reference uniqueness test**
+- [x] **Step 1: Write the failing tenant-reference uniqueness test**
 
 ```python
 def test_load_reference_is_unique_only_inside_a_tenant(migrated_connection):
@@ -52,21 +52,21 @@ def test_load_reference_is_unique_only_inside_a_tenant(migrated_connection):
         insert_load(migrated_connection, atlas, "LD-1048")
 ```
 
-- [ ] **Step 2: Verify schema RED**
+- [x] **Step 2: Verify schema RED**
 
 Run: `cd backend && uv run pytest tests/integration/test_freight_schema.py -q`  
 Expected: FAIL because freight tables are absent.
 
-- [ ] **Step 3: Add freight and tracking tables with indexes**
+- [x] **Step 3: Add freight and tracking tables with indexes**
 
 Create UUID-keyed loads, stops, legs, tracking points, and documents. Include tenant/reference uniqueness; load status, next appointment, latest tracking, stop sequence, and document-status indexes. Preserve source event ids for tracking deduplication.
 
-- [ ] **Step 4: Verify freight schema GREEN**
+- [x] **Step 4: Verify freight schema GREEN**
 
 Run: `cd backend && uv run pytest tests/integration/test_freight_schema.py -q`  
 Expected: PASS.
 
-- [ ] **Step 5: Write failing goal and action idempotency tests**
+- [x] **Step 5: Write failing goal and action idempotency tests**
 
 ```python
 def test_duplicate_goal_and_action_keys_are_rejected(migrated_connection, seeded_load):
@@ -78,16 +78,16 @@ def test_duplicate_goal_and_action_keys_are_rejected(migrated_connection, seeded
         insert_action(migrated_connection, first_goal, fingerprint="email:am:late-v1")
 ```
 
-- [ ] **Step 6: Add agent, event, fact, action, outcome, and communication tables**
+- [x] **Step 6: Add agent, event, fact, action, outcome, and communication tables**
 
 Implement the exact unique keys from the PRD, state/lease indexes, append-only event sequence uniqueness, fact content hash, and provider-id uniqueness. Add foreign keys that prevent cross-tenant linkage.
 
-- [ ] **Step 7: Verify constraints and repositories GREEN**
+- [x] **Step 7: Verify constraints and repositories GREEN**
 
 Run: `cd backend && uv run pytest tests/integration/test_goal_constraints.py tests/integration/test_freight_schema.py -q`  
 Expected: all tests pass.
 
-- [ ] **Step 8: Commit Task 1**
+- [x] **Step 8: Commit Task 1**
 
 ```bash
 git add backend/migrations/002_freight_and_agents.sql backend/src/relayops/domain backend/src/relayops/repositories backend/tests/integration

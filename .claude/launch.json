@@ -1,0 +1,20 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "relayops-console",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--"
+      ],
+      "cwd": "frontend",
+      "port": 5173,
+      "env": {
+        "VITE_API_ORIGIN": "http://localhost:5055"
+      },
+      "autoPort": true
+    }
+  ]
+}

@@ -16,13 +16,17 @@ from relayops.errors import NotFound, ok
 from relayops.facts.late_pickup import LatePickupFacts
 from relayops.repositories.goals import GoalRepository
 from relayops.services.board import BoardRow, load_board
-from relayops.services.race_demo import race_scanners
+from relayops.services.race_demo import race_scanners, reset_demo
 
 bp = Blueprint("operations", __name__)
 
 
 def _iso(moment: datetime | None) -> str | None:
     return None if moment is None else moment.astimezone(UTC).isoformat()
+
+
+def _point_json(point: tuple[float, float] | None) -> dict | None:
+    return None if point is None else {"latitude": point[0], "longitude": point[1]}
 
 
 def _facts_json(facts: LatePickupFacts) -> dict:
@@ -67,6 +71,8 @@ def _row_json(row: BoardRow) -> dict:
         "driver_name": row.driver_name,
         "origin": row.origin,
         "destination": row.destination,
+        "origin_point": _point_json(row.origin_point),
+        "destination_point": _point_json(row.destination_point),
         "pickup_appointment": _iso(row.pickup_appointment),
         "facts": _facts_json(row.facts),
     }
@@ -78,7 +84,7 @@ def _summary(board: list[BoardRow]) -> dict:
     ``needs_action`` deliberately includes unknowns: a load we cannot see needs
     a human as much as one we can see is late.
     """
-    counts = {"late": 0, "at_risk": 0, "unknown": 0, "on_time": 0, "early": 0}
+    counts = {"late": 0, "at_risk": 0, "unknown": 0, "on_time": 0, "early": 0, "scheduled": 0}
     for row in board:
         counts[row.facts.classification] = counts.get(row.facts.classification, 0) + 1
     return {
@@ -88,6 +94,7 @@ def _summary(board: list[BoardRow]) -> dict:
         "at_risk": counts["at_risk"],
         "no_signal": counts["unknown"],
         "on_track": counts["on_time"] + counts["early"],
+        "not_started": counts["scheduled"],
     }
 
 
@@ -178,6 +185,15 @@ def run_race(tenant_ref: str):
         },
         meta={"tenant": context.tenant.slug},
     )
+
+
+@bp.post("/tenants/<tenant_ref>/demo/reset")
+@require_login
+def reset(tenant_ref: str):
+    """Re-anchor the demo board to now and clear this tenant's agent goals."""
+    context = resolve_tenant(tenant_ref, principal=current_principal())
+    result = reset_demo(get_engine(), context.tenant_id)
+    return ok(result, meta={"tenant": context.tenant.slug})
 
 
 @bp.get("/tenants/<tenant_ref>/goals/<goal_id>/trace")

@@ -98,6 +98,20 @@ def test_lateness_below_the_threshold_is_at_risk_not_late() -> None:
     assert facts.classification == "at_risk"
 
 
+def test_a_pickup_beyond_the_planning_horizon_is_scheduled_not_early() -> None:
+    """A load due in nine hours is not "early"; it has not started yet.
+
+    Without this band the board reads as if most of the fleet were running
+    ahead of schedule, which buries the handful of loads that need a human.
+    """
+    view = build_view(appointment=NOW + timedelta(hours=9))
+
+    facts = late_pickup_facts(view, CONFIG, NOW, route=route(55))
+
+    assert facts.classification == "scheduled"
+    assert facts.minutes_late == -485
+
+
 def test_arriving_before_the_appointment_is_not_late() -> None:
     facts = late_pickup_facts(build_view(), CONFIG, NOW, route=route(10))
 

@@ -22,7 +22,7 @@ export interface NavItem {
 
 export const NAV_ITEMS: NavItem[] = [
   { id: "overview", label: "Overview", to: "/", icon: LayoutDashboard },
-  { id: "live-operations", label: "Live Operations", to: "/live", icon: Activity, placeholder: true },
+  { id: "live-operations", label: "Live Operations", to: "/live", icon: Activity },
   { id: "goals", label: "Goals", to: "/goals", icon: ListChecks, placeholder: true },
   { id: "inbox", label: "Inbox", to: "/inbox", icon: Inbox, placeholder: true },
   { id: "agents", label: "Agents", to: "/agents", icon: Boxes, placeholder: true },

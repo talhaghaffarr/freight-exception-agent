@@ -8,16 +8,10 @@
 import type { ReactElement } from "react";
 import { Route, Routes } from "react-router-dom";
 
+import { LiveOperationsPage } from "@/features/live/LiveOperationsPage";
 import { PlaceholderPage } from "@/features/placeholder/PlaceholderPage";
 
 const PLACEHOLDERS = [
-  {
-    path: "/live",
-    title: "Live Operations",
-    increment: "Increment 2",
-    description:
-      "The priority load board, milestone timeline, and per-load agent activity arrive with the Late Pickup slice.",
-  },
   {
     path: "/goals",
     title: "Goals",
@@ -70,6 +64,7 @@ export function AppRoutes({ overview, system }: AppRoutesProps) {
     <Routes>
       <Route path="/" element={overview} />
       <Route path="/system" element={system} />
+      <Route path="/live" element={<LiveOperationsPage />} />
       {PLACEHOLDERS.map((placeholder) => (
         <Route
           key={placeholder.path}
