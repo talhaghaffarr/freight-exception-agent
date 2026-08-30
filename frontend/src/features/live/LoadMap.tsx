@@ -56,22 +56,43 @@ export function LoadMap({ rows, selected, onSelect }: LoadMapProps) {
         attributionControl: { compact: true },
       });
       instance.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right");
-      instance.on("load", () => setReady(true));
+      instance.on("load", () => {
+        setReady(true);
+        // Some embedders composite the canvas before the first tile paint
+        // lands, leaving the basemap blank until something forces a repaint.
+        // Two frames of nudging costs nothing and avoids a blank map.
+        requestAnimationFrame(() => {
+          instance.resize();
+          instance.triggerRepaint();
+          requestAnimationFrame(() => instance.triggerRepaint());
+        });
+      });
       instance.on("error", () => setFailed(true));
       map.current = instance;
     } catch {
       setFailed(true);
     }
+    // The pane is a grid track whose width changes with the breakpoint and with
+    // the window. MapLibre sizes its canvas once at construction, so without
+    // this the map renders blank after any layout change.
+    const observer = new ResizeObserver(() => map.current?.resize());
+    observer.observe(container.current);
+
     return () => {
+      observer.disconnect();
       map.current?.remove();
       map.current = null;
     };
   }, []);
 
   // Position markers for every load that has reported one.
+  //
+  // Markers are DOM overlays rather than style layers, so they must not wait on
+  // the style "load" event -- gating them on it left the map empty whenever the
+  // style resolved before this effect ran.
   useEffect(() => {
     const instance = map.current;
-    if (!instance || !ready) return;
+    if (!instance) return;
 
     markers.current.forEach((marker) => marker.remove());
     markers.current = rows
@@ -88,7 +109,7 @@ export function LoadMap({ rows, selected, onSelect }: LoadMapProps) {
           .setLngLat([row.facts.position!.longitude, row.facts.position!.latitude])
           .addTo(instance);
       });
-  }, [rows, ready, selected?.reference, onSelect]);
+  }, [rows, selected?.reference, onSelect]);
 
   // Draw the selected load's remaining leg: current position to pickup.
   useEffect(() => {

@@ -103,12 +103,12 @@
 /* ---- Split workspace ---- */
 .live__split {
   display: grid;
-  grid-template-columns: minmax(260px, 320px) minmax(320px, 1fr) minmax(360px, 440px);
+  grid-template-columns: minmax(240px, 300px) minmax(280px, 1fr) minmax(340px, 420px);
   gap: var(--space-4);
   align-items: start;
 }
 
-@media (max-width: 1500px) {
+@media (max-width: 1180px) {
   .live__split {
     grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
   }
@@ -299,6 +299,15 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
+}
+
+/*
+ * Flex children default to shrinking, which let the fact grid and the ledger
+ * squash to a fraction of their height instead of scrolling the column. They
+ * keep their natural size; the column scrolls.
+ */
+.detail__body > * {
+  flex: 0 0 auto;
 }
 
 .detail__lede {

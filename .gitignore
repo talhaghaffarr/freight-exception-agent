@@ -34,3 +34,7 @@ backend/celerybeat-schedule*
 
 # Local non-Docker dev convenience (no secrets, but machine-specific ports)
 backend/.env.dev
+
+# Walkthrough video workspace (parked; not part of the app build)
+video/node_modules/
+video/out/
