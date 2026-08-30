@@ -43,3 +43,6 @@ video/out/
 docs/design-directions/relayops-console.html
 video/.venv-tts/
 video/narration/*.wav
+
+# Licensed audio: usable in the rendered video, not redistributable standalone
+video/public/music.mp3
