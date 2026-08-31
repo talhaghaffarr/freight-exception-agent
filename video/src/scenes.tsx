@@ -380,7 +380,10 @@ export function CloseScene() {
           </div>
         </Rise>
         <Rise delay={44}>
-          <div style={{ fontFamily: MONO, fontSize: 28, color: theme.brand, marginTop: 40 }}>
+          <div style={{ fontFamily: MONO, fontSize: 34, fontWeight: 600, color: theme.brand, marginTop: 40 }}>
+            relayops-demo.onrender.com
+          </div>
+          <div style={{ fontFamily: MONO, fontSize: 22, color: theme.textMute, marginTop: 12 }}>
             github.com/talhaghaffarr/freight-exception-agent
           </div>
         </Rise>

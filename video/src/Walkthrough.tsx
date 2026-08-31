@@ -5,7 +5,7 @@
  * to one scene's length cannot silently shift the ones after it.
  */
 
-import { AbsoluteFill, Audio, Sequence, interpolate, staticFile } from "remotion";
+import { AbsoluteFill, Audio, Sequence, staticFile } from "remotion";
 import { loadFont as loadBarlow } from "@remotion/google-fonts/Barlow";
 import { loadFont as loadBarlowCondensed } from "@remotion/google-fonts/BarlowCondensed";
 import { loadFont as loadPlexMono } from "@remotion/google-fonts/IBMPlexMono";
@@ -39,19 +39,6 @@ const NARRATION = [
   { id: "close", from: 2508 },
 ] as const;
 
-/** The music bed sits well under the voice; it is texture, not a score. */
-const MUSIC_VOLUME = 0.11;
-
-function musicVolume(frame: number): number {
-  return (
-    MUSIC_VOLUME *
-    interpolate(frame, [0, 45, 2520, 2690], [0, 1, 1, 0], {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-    })
-  );
-}
-
 const TIMELINE = [
   { key: "title", scene: <TitleScene /> },
   { key: "board", scene: <BoardScene /> },
@@ -71,7 +58,6 @@ export function Walkthrough() {
         </Sequence>
       ))}
 
-      <Audio src={staticFile("music.mp3")} volume={musicVolume} />
       {NARRATION.map(({ id, from }) => (
         <Sequence key={`vo-${id}`} name={`vo-${id}`} from={from}>
           <Audio src={staticFile(`vo/${id}.wav`)} />

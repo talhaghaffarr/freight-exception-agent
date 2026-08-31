@@ -35,9 +35,12 @@ backend/celerybeat-schedule*
 # Local non-Docker dev convenience (no secrets, but machine-specific ports)
 backend/.env.dev
 
-# Walkthrough video workspace (parked; not part of the app build)
+# Walkthrough video workspace (parked; not part of the app build).
+# The rendered walkthrough itself is committed; the frame stills and other
+# render scratch under out/ are not.
 video/node_modules/
-video/out/
+video/out/*
+!video/out/relayops-walkthrough.mp4
 
 # Design canvas: keep the .dc.html sources, not the ~2MB seeded page
 docs/design-directions/relayops-console.html
