@@ -5,6 +5,12 @@ idempotency, and observable non-action outcomes.
 
 > **Sandbox.** Synthetic freight data. No external messages are ever sent.
 
+## Walkthrough
+
+[![RelayOps walkthrough — 90 seconds](docs/walkthrough-poster.png)](https://talhaghaffarr.github.io/freight-exception-agent/)
+
+**▶ [Watch the 90-second walkthrough](https://talhaghaffarr.github.io/freight-exception-agent/)** — the late-pickup slice end to end: computed ETAs, the agent's decision ledger, honest handling of an unknown ETA, and two racing scanners resolving to one database goal. ([Live demo](https://relayops-demo.onrender.com/).)
+
 Brokers lose money on pickups that quietly run late and on shipment questions that
 sit in an inbox. The usual answer is to point a language model at the problem.
 This is the other answer: the model is confined to interpreting unstructured
