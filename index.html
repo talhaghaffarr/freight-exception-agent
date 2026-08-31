@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RelayOps Walkthrough</title>
+<meta name="description" content="90-second walkthrough of the RelayOps late-pickup slice.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --ground:#eef1f5; --surface:#ffffff; --border:#e2e7ee; --border-strong:#c9d2dd;
+    --ink:#16202e; --text:#182230; --text-dim:#4d5a6b; --text-mute:#7b8798;
+    --brand:#1f5b9e; --brand-strong:#174a85; --brand-soft:#e8eff7;
+    --amber:#96610a; --amber-soft:#f7eeda;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--ground); color:var(--text);
+    font-family:"Barlow",system-ui,-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    display:flex; min-height:100vh; align-items:center; justify-content:center;
+    padding:clamp(24px,5vw,56px);
+  }
+  .wrap{ width:100%; max-width:940px; }
+  .eyebrow{
+    font-family:"Barlow Condensed",sans-serif; text-transform:uppercase;
+    letter-spacing:.15em; font-weight:600; font-size:15px; color:var(--brand); margin:0 0 12px;
+  }
+  h1{
+    font-family:"Barlow Condensed",sans-serif; text-transform:uppercase; font-weight:700;
+    font-size:clamp(46px,8vw,78px); line-height:.92; letter-spacing:.012em;
+    margin:0; color:var(--text);
+  }
+  .rule{ height:3px; width:104px; background:var(--brand); margin:20px 0 18px; border-radius:2px; }
+  .lede{
+    font-size:clamp(17px,2.4vw,21px); color:var(--text-dim);
+    max-width:60ch; margin:0 0 30px; line-height:1.5;
+  }
+  .player{
+    position:relative; border-radius:14px; overflow:hidden; background:#000;
+    border:1px solid var(--border-strong); box-shadow:0 26px 64px -30px rgba(22,32,46,.5);
+  }
+  video{ display:block; width:100%; height:auto; }
+  .meta{ display:flex; flex-wrap:wrap; gap:16px 28px; align-items:center; margin-top:24px; }
+  .chip{
+    font-family:"Barlow Condensed",sans-serif; text-transform:uppercase; letter-spacing:.09em;
+    font-weight:600; font-size:13px; color:var(--amber); background:var(--amber-soft);
+    padding:7px 13px; border-radius:999px;
+  }
+  .links{ display:flex; flex-wrap:wrap; gap:12px 26px; margin-left:auto;
+    font-family:"IBM Plex Mono",monospace; font-size:14px; }
+  .links a{ color:var(--brand); text-decoration:none; border-bottom:1px solid transparent; padding-bottom:1px; }
+  .links a:hover{ border-bottom-color:var(--brand); }
+  .links a:focus-visible{ outline:2px solid var(--brand); outline-offset:3px; border-radius:2px; }
+  @media (max-width:560px){ .links{ margin-left:0; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Walkthrough &middot; 90 seconds</p>
+  <h1>RelayOps</h1>
+  <div class="rule"></div>
+  <p class="lede">A late pickup, detected from freight facts and acted on exactly once. The facts are computed; only the prose is generated.</p>
+  <div class="player">
+    <video controls playsinline preload="metadata" poster="poster.png">
+      <source src="relayops-walkthrough.mp4" type="video/mp4">
+      Your browser can’t play embedded video — <a href="relayops-walkthrough.mp4">download the walkthrough</a>.
+    </video>
+  </div>
+  <div class="meta">
+    <span class="chip">Sandbox &middot; synthetic data &middot; no external sends</span>
+    <span class="links">
+      <a href="https://relayops-demo.onrender.com/" target="_blank" rel="noopener">relayops-demo.onrender.com</a>
+      <a href="https://github.com/talhaghaffarr/freight-exception-agent" target="_blank" rel="noopener">source ↗</a>
+    </span>
+  </div>
+</div>
+</body>
+</html>
